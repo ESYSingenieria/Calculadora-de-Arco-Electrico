@@ -59,7 +59,7 @@ function validateInputs() {
 
     // Si hay errores, mostrar todos los mensajes juntos con el título
     if (errors.length > 0) {
-        let title = "Parámetro(s) Fuera de Rangos del Modelo de la Norma IEEE1584-2018:";
+        let title = "Parámetro(s) Fuera de Rangos del Modelo de la Norma IEEE 1584-2018:";
         alert(title + "\n\n" + errors.join("\n\n"));
         return false; // Detener la ejecución si hay errores
     }
