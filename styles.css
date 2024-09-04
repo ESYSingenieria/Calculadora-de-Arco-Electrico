@@ -11,6 +11,7 @@ header.wp-block-group {
     display: flex;
     justify-content: space-between; /* Para mover el contenido hacia los extremos */
     align-items: center;
+    flex-wrap: wrap; /* Permite que los elementos se acomoden en varias líneas si es necesario */
 }
 
 /* Desplazar los enlaces a la esquina superior derecha */
@@ -109,6 +110,29 @@ header.wp-block-group {
     display: block;
 }
 
+/* Medios queries para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Ajustes generales para móviles */
+    header.wp-block-group {
+        flex-direction: column; /* Coloca el contenido del banner en columnas en móviles */
+        padding: 10px;
+    }
+
+    .wp-block-site-logo {
+        margin-bottom: 10px; /* Añadir un margen inferior al logo en móviles */
+        text-align: center; /* Centrar el logo en móviles */
+    }
+
+    .wp-block-navigation ul {
+        flex-direction: column; /* Colocar los enlaces de navegación en columnas en móviles */
+        align-items: center; /* Centrar los enlaces */
+        margin: 0;
+    }
+
+    .wp-block-navigation ul li {
+        margin-bottom: 10px; /* Añadir espacio entre los enlaces en móviles */
+    }
+}
 
 
 
