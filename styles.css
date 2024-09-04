@@ -145,9 +145,15 @@ header.wp-block-group {
     }
 
     .submenu {
-        display: none !important; /* Mantener el submenú cerrado incluso en pantallas grandes */
+        display: none; /* No usar "!important" aquí, el submenú debe abrirse al hacer clic */
+    }
+
+    /* Mostrar el submenú cuando tiene la clase "show" */
+    .submenu.show {
+        display: block; /* Mostrar el submenú cuando tenga la clase "show" */
     }
 }
+
 
 
 
