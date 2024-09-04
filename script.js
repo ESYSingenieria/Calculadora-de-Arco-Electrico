@@ -6,21 +6,34 @@ document.addEventListener('DOMContentLoaded', function() {
     var submenu = document.querySelector('.submenu');
     var menuToggle = document.querySelector('.menu-toggle');
 
-    console.log(menu, submenuLink, submenu, menuToggle); // Verifica si los elementos están siendo seleccionados correctamente
-
+    // Abrir y cerrar el menú principal
     menuToggle.addEventListener('click', function(event) {
         console.log('El botón de menú fue presionado');
         event.stopPropagation();
-        menu.classList.toggle('show');
+        menu.classList.toggle('show'); // Alterna la clase "show" en el menú
     });
 
+    // Abrir y cerrar el submenú de "Soluciones"
     submenuLink.addEventListener('click', function(event) {
         console.log('El enlace de Soluciones fue presionado');
-        event.preventDefault();
-        event.stopPropagation();
-        submenu.classList.toggle('show');
+        event.preventDefault(); // Prevenir que recargue la página
+        submenu.classList.toggle('show'); // Alterna la clase "show" en el submenú
+    });
+
+    // Cerrar el menú o submenú si se hace clic fuera de ellos
+    document.addEventListener('click', function(event) {
+        if (!menu.contains(event.target) && menu.classList.contains('show')) {
+            console.log('Cerrando el menú al hacer clic fuera');
+            menu.classList.remove('show'); // Cierra el menú si se hace clic fuera
+        }
+
+        if (!submenu.contains(event.target) && !submenuLink.contains(event.target) && submenu.classList.contains('show')) {
+            console.log('Cerrando el submenú al hacer clic fuera');
+            submenu.classList.remove('show'); // Cierra el submenú si se hace clic fuera
+        }
     });
 });
+
 
 
 
