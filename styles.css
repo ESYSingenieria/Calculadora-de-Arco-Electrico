@@ -1,30 +1,144 @@
+/* Estilos del banner de navegación */
+header.wp-block-group {
+    background-color: #f5f5f5;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between; /* Para mover el contenido hacia los extremos */
+    align-items: center;
+}
+
+/* Desplazar los enlaces a la esquina superior derecha */
+.wp-block-navigation {
+    margin-right: 50px; /* Añadir espacio desde el borde derecho */
+}
+
+.wp-block-navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end; /* Mover los enlaces a la derecha */
+}
+
+.wp-block-navigation ul li {
+    display: inline-block;
+    margin-left: 40px; /* Espacio entre los enlaces */
+}
+
+/* Cambiar el color del texto del banner a negro */
+.wp-block-navigation ul li a {
+    text-decoration: none;
+    color: #000; /* Cambia el color de los enlaces a negro */
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.wp-block-navigation ul li a:hover {
+    color: #333; /* Un tono diferente al pasar el cursor */
+}
+
+.wp-block-site-logo {
+    margin-left: 20px; /* Espacio desde el borde izquierdo */
+}
+
+.wp-block-site-logo img {
+    width: 150px;
+}
+
+/* Estilos para el submenú */
+.wp-block-navigation .has-child {
+    position: relative;
+}
+
+.wp-block-navigation .submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f5f5f5;
+    padding: 0; /* Quitar padding para ajustar el texto al borde izquierdo */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    margin: 0;
+    width: 200px;
+}
+
+.wp-block-navigation .submenu-item {
+    padding: 0; /* Eliminar padding en los items del submenú */
+    margin: 0; /* Eliminar márgenes adicionales */
+}
+
+.wp-block-navigation .submenu-item a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    padding: 5px 10px; /* Reducir padding para acercar el texto al borde */
+    display: block;
+    line-height: 2.0; /* Aumentar el espacio entre las líneas de texto */
+    padding-left: 18px; /* Agregar 5 píxeles de separación desde el borde izquierdo */
+}
+
+.wp-block-navigation .submenu-item a:hover {
+    color: #333;
+}
+
+/* Mostrar el submenú al pasar el ratón */
+.wp-block-navigation .has-child:hover .submenu {
+    display: block;
+}
+
+/* Alinear y ajustar la flecha SVG junto a "Soluciones" */
+.wp-block-navigation .has-child > a svg {
+    margin-left: 0px; /* Espacio entre el texto "Soluciones" y la flecha */
+    vertical-align: middle; /* Alinear la flecha verticalmente con el texto */
+    stroke: #000; /* Color de la flecha (puedes cambiarlo si es necesario) */
+}
+
+.wp-block-navigation .has-child:hover > a svg {
+    stroke: #333; /* Cambiar el color de la flecha al pasar el cursor */
+}
+
+/* Mostrar el submenú al pasar el ratón */
+.wp-block-navigation .has-child:hover .submenu {
+    display: block;
+}
+
+
+
+
+
+
+
+
+
+
+/* Ajustes para que el contenido no se superponga con el banner */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
     min-height: 100vh;
-    padding-top: 50px;
-    padding-bottom: 0px;
-    transition: padding-bottom 0.3s ease;
-    margin-bottom: 45px; /* Reducimos el margen inferior */
-    overflow: hidden; /* Evita el desplazamiento inicial */
+    padding-top: 140px; /* Ajuste según la altura del banner */
 }
 
+/* Asegurar que la calculadora esté correctamente centrada */
 .calculator-container {
-    position: relative;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 400px;
-    height: 547px;
     width: 100%;
+    height: 607px; 
+    margin: 0 auto;
     text-align: center;
-    margin-top: -30px;
 }
 
 .norma-text {
@@ -50,14 +164,8 @@ header {
     margin-bottom: 20px;
 }
 
-.logo {
-    margin-top: -20px; /* Reduce el espacio entre el logo y el título */
-    width: 200px;
-    margin-bottom: 10px;
-}
-
 h1 {
-    margin-top: -20px; /* Reduce el espacio entre el logo y el título */
+    margin-top: 0px; /* Reduce el espacio entre el logo y el título */
     font-size: 1.5em;
     color: #0059A9;
     margin-bottom: -5px;
@@ -122,7 +230,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
+    margin-top: 3px;
     align-self: center; /* Centra el botón */
 }
 
@@ -153,7 +261,7 @@ canvas {
 .result-container {
     width: 100%;
     max-width: 300px; /* Asegura que no sea más ancho que el contenedor principal */
-    height: 155px; 
+    height: 260px; 
     background-color: #0059A9;
     color: #fff;
     font-weight: bold;
@@ -167,6 +275,24 @@ canvas {
     margin-right: auto; /* Centrar horizontalmente */
     margin-bottom: 20px;
     overflow: hidden;
+}
+
+.chart-container2 {
+    width: 100%;
+    height: 400px; 
+    margin: -9px;
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: none; /* Ocultar el contenedor inicialmente */
+}
+
+#lineChart {
+    width: 100%;
+    height: 100%;
 }
 
 /* Ocultar el botón de descarga visualmente */
