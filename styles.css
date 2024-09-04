@@ -94,15 +94,17 @@ header.wp-block-group {
     display: block;
 }
 
-/* Alinear y ajustar la flecha SVG junto a "Soluciones" */
-.wp-block-navigation .has-child > a svg {
-    margin-left: 0px; /* Espacio entre el texto "Soluciones" y la flecha */
-    vertical-align: middle; /* Alinear la flecha verticalmente con el texto */
-    stroke: #000; /* Color de la flecha (puedes cambiarlo si es necesario) */
-}
-
-.wp-block-navigation .has-child:hover > a svg {
-    stroke: #333; /* Cambiar el color de la flecha al pasar el cursor */
+/* Flecha abierta junto a "Soluciones" */
+.wp-block-navigation .has-child > a::after {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-left: 5px;
+    vertical-align: middle;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" stroke="%23555" stroke-width="1.5"><path d="M1.5 4L6 8L10.5 4" /></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 /* Mostrar el submenú al pasar el ratón */
