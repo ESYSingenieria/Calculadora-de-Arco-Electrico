@@ -7,16 +7,50 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/decimal.js@10.3.1/decimal.min.js"></script>
     <script src="script.js" defer></script>
 </head>
 <body>
 
-    <div class="calculator-container" id="calculator-container">
+    <!-- Banner de navegación de ESYS -->
+    <header class="wp-block-group alignfull has-theme-1-background-color has-background is-content-justification-space-between is-nowrap is-layout-flex wp-container-core-group-is-layout-7 wp-block-group-is-layout-flex wp-container-3 is-position-sticky">
+        <div class="wp-block-group is-nowrap is-layout-flex wp-container-core-group-is-layout-1 wp-block-group-is-layout-flex">
+            <div class="wp-block-site-logo">
+                <a href="https://esys.cl" class="custom-logo-link" rel="home" aria-current="page">
+                    <img width="150" height="59" src="https://esys.cl/wp-content/uploads/2024/06/esys-color.png" class="custom-logo" alt="ESYS Electrical Systems">
+                </a>
+            </div>
+        </div>
 
+        <nav class="wp-block-navigation">
+            <ul>
+                <li><a href="https://esys.cl/?page_id=247">Nuestros Servicios</a></li>
+                <li><a href="https://esys.cl/sobrenosotros/">Nosotros</a></li>
+                <li><a href="https://esys.cl/experiencias-destacadas/">Experiencias Destacadas</a></li>
+                <li class="wp-block-navigation-item has-child">
+                    <a class="wp-block-navigation-item__content">
+                        Soluciones
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false">
+                            <path d="M1.5 4L6 8L10.5 4" stroke-width="1.5"></path>
+                        </svg>
+                    </a>
+                    <ul class="submenu">
+                        <li class="submenu-item">
+                            <a href="https://esysingenieria.github.io/Calculadora-de-Arco-Electrico/">Calculadora de Arco Eléctrico AC</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="https://esys.cl/proxxi/">PROXXI</a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="https://esys.cl/contactanos/">Contáctanos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Calculadora -->
+    <div class="calculator-container" id="calculator-container">
         <header>
-            <a href="https://esys.cl" target="_self">
-                <img src="logo.png" alt="Logo de la Empresa" class="logo">
-            </a>
             <h1>Calculadora de Arco Eléctrico AC</h1>
         </header>
 
@@ -53,6 +87,11 @@
             </div>
 
             <div class="form-group">
+                <label for="arcDurationmín">Duración del Arco Eléctrico con Corriente de Arco Mínima [ms]:</label>
+                <input type="number" id="arcDurationmín" min="10" max="2000" step="0.1" required>
+            </div>
+
+            <div class="form-group">
                 <label for="workingDistance">Distancia de Trabajo [mm]:</label>
                 <input type="number" id="workingDistance" min="25.4" max="2540" step="0.1" required>
             </div>
@@ -72,6 +111,16 @@
                 <input type="number" id="depth" step="0.1" required>
             </div>
 
+            <div class="form-group">
+                <label for="limepp1_calcm2">Máxima Energía Incidente para EPP de Categoría 1 [cal/cm²]:</label>
+                <input type="number" id="limepp1_calcm2" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="limepp2_calcm2">Máxima Energía Incidente para EPP de Categoría 2 [cal/cm²]:</label>
+                <input type="number" id="limepp2_calcm2" step="0.1" required>
+            </div>
+
             <button type="button" id="calculateButton">Calcular</button>
         </form>
 
@@ -83,9 +132,30 @@
             <canvas id="elipseChart"></canvas>
         </div>
 
+        <div class="chart-container2">
+            <canvas id="lineChart"></canvas>
+        </div>
+
         <button id="downloadButton" onclick="descargarGrafico()">Descargar Gráfico</button>
 
         <div id="extra-space"></div>
+
+        <div id="custom-tooltip" style="
+            position: absolute;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid black;
+            padding: 10px;
+            border-radius: 5px;
+            pointer-events: none;
+            max-width: 800px; /* Ancho máximo del cuadro de texto */
+            width: 400px; /* Ancho máximo del cuadro de texto */
+            white-space: normal; /* Permite que el texto se ajuste a varias líneas */
+            word-wrap: break-word; /* Permite el ajuste de palabras largas */
+            margin-left: -200px;  /* Ajustar para acercar más a la izquierda */
+            margin-top: -100px;   /* Ajustar para acercar más hacia arriba */
+        "></div>
 
       <p class="norma-text">*Cálculos basados en la norma IEEE 1584-2018</p>
       <p class="warning-text">**¡A pesar de estar comprobada la exactitud de estos resultados, se recomienda que estos sean revisados por especialistas!</p>
