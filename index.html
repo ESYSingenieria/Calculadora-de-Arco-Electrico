@@ -55,6 +55,7 @@
         <li><a href="https://esys.cl/contactanos/">Contáctanos</a></li>
     </ul>
 </nav>
+
     </header>
 
     <!-- Calculadora -->
@@ -182,8 +183,11 @@
     document.querySelector('.has-child > a').addEventListener('click', function() {
         var submenu = this.nextElementSibling;
         submenu.classList.toggle('show'); // Mostrar u ocultar el submenú
+        // Evitar que el clic cierre el menú principal
+        event.stopPropagation();
     });
 </script>
+
     
 </body>
 </html>
