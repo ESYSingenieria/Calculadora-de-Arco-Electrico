@@ -166,17 +166,13 @@
     // Asegurarse de que el menú esté cerrado al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
         var menu = document.querySelector('.menu-items');
-        menu.classList.remove('show'); // Forzar el cierre del menú al cargar
+        menu.classList.remove('show'); // Cerrar el menú al cargar
     });
 
     // Alternar el menú colapsable al hacer clic en el botón
     document.querySelector('.menu-toggle').addEventListener('click', function() {
         var menu = document.querySelector('.menu-items');
-        if (menu.classList.contains('show')) {
-            menu.classList.remove('show'); // Cerrar el menú si está abierto
-        } else {
-            menu.classList.add('show'); // Abrir el menú si está cerrado
-        }
+        menu.classList.toggle('show'); // Mostrar u ocultar el menú principal
     });
 
     // Alternar el submenú de "Soluciones"
@@ -185,7 +181,17 @@
         var submenu = this.nextElementSibling;
         submenu.classList.toggle('show'); // Mostrar u ocultar el submenú
     });
+
+    // Cerrar el submenú si se hace clic fuera
+    document.addEventListener('click', function(event) {
+        var isClickInside = document.querySelector('.has-child').contains(event.target);
+        if (!isClickInside) {
+            var submenu = document.querySelector('.submenu');
+            submenu.classList.remove('show'); // Cerrar el submenú si se hace clic fuera
+        }
+    });
 </script>
+
 
     
 </body>
