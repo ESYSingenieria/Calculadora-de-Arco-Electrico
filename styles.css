@@ -127,7 +127,7 @@ header.wp-block-group {
     }
 
     .menu-items {
-        display: none; /* Ocultar el menú por defecto en móviles */
+        display: none; /* Asegurarse de que el menú esté cerrado por defecto */
         flex-direction: column;
         text-align: center;
         margin: 0;
@@ -139,7 +139,17 @@ header.wp-block-group {
     }
 
     .menu-items li {
-        margin: 15px 0; /* Añadir espacio entre los enlaces en móviles */
+        margin: 15px 0; /* Espacio entre los enlaces en móviles */
+    }
+
+    /* Submenú oculto por defecto */
+    .submenu {
+        display: none;
+    }
+
+    /* Mostrar submenú cuando esté activo */
+    .submenu.show {
+        display: block;
     }
 }
 
