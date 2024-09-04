@@ -1,4 +1,28 @@
-console.log('El script está funcionando correctamente');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('El script para el menú está funcionando correctamente');
+
+    var menu = document.querySelector('.menu-items');
+    var submenuLink = document.querySelector('.has-child > a');
+    var submenu = document.querySelector('.submenu');
+    var menuToggle = document.querySelector('.menu-toggle');
+
+    console.log(menu, submenuLink, submenu, menuToggle); // Verifica si los elementos están siendo seleccionados correctamente
+
+    menuToggle.addEventListener('click', function(event) {
+        console.log('El botón de menú fue presionado');
+        event.stopPropagation();
+        menu.classList.toggle('show');
+    });
+
+    submenuLink.addEventListener('click', function(event) {
+        console.log('El enlace de Soluciones fue presionado');
+        event.preventDefault();
+        event.stopPropagation();
+        submenu.classList.toggle('show');
+    });
+});
+
+
 
 function validateInputs() {
     var faultCurrent = parseFloat(document.getElementById("faultCurrent").value);
@@ -2249,43 +2273,3 @@ if (E_calcm2_final <= limepp2_calcm2) {
     });
   }
 }
-
-
-
-
-
-
-// Agregar el manejo del menú y submenú
-document.addEventListener('DOMContentLoaded', function() {
-    var menu = document.querySelector('.menu-items');
-    var submenuLink = document.querySelector('.has-child > a');
-    var submenu = document.querySelector('.submenu');
-    var menuToggle = document.querySelector('.menu-toggle');
-
-    // Asegurar que el menú esté cerrado al iniciar
-    menu.classList.remove('show');
-    submenu.classList.remove('show');
-
-    // Alternar el menú principal (botón hamburguesa)
-    menuToggle.addEventListener('click', function(event) {
-        event.stopPropagation(); // Evitar que otros clics interfieran
-        menu.classList.toggle('show'); // Abrir o cerrar el menú
-    });
-
-    // Alternar el submenú de "Soluciones"
-    submenuLink.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevenir que recargue la página
-        event.stopPropagation(); // Evitar que el clic se propague
-        submenu.classList.toggle('show'); // Mostrar u ocultar el submenú
-    });
-
-    // Cerrar el menú o submenú si se hace clic fuera
-    document.addEventListener('click', function(event) {
-        if (!menu.contains(event.target) && menu.classList.contains('show')) {
-            menu.classList.remove('show'); // Cerrar el menú si está abierto y se hace clic fuera
-        }
-        if (!submenu.contains(event.target) && !submenuLink.contains(event.target) && submenu.classList.contains('show')) {
-            submenu.classList.remove('show'); // Cerrar el submenú si está abierto y se hace clic fuera
-        }
-    });
-});
