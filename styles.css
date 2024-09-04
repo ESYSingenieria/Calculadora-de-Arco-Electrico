@@ -110,27 +110,36 @@ header.wp-block-group {
     display: block;
 }
 
-/* Medios queries para pantallas pequeñas */
+/* Estilos del menú colapsable para móviles */
+.menu-toggle {
+    display: none; /* Ocultar el botón en pantallas grandes */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+/* Mostrar el botón de menú en pantallas pequeñas */
 @media (max-width: 768px) {
-    /* Ajustes generales para móviles */
-    header.wp-block-group {
-        flex-direction: column; /* Coloca el contenido del banner en columnas en móviles */
-        padding: 10px;
+    .menu-toggle {
+        display: block; /* Mostrar el botón en pantallas pequeñas */
     }
 
-    .wp-block-site-logo {
-        margin-bottom: 10px; /* Añadir un margen inferior al logo en móviles */
-        text-align: center; /* Centrar el logo en móviles */
-    }
-
-    .wp-block-navigation ul {
-        flex-direction: column; /* Colocar los enlaces de navegación en columnas en móviles */
-        align-items: center; /* Centrar los enlaces */
+    .menu-items {
+        display: none; /* Ocultar el menú por defecto en móviles */
+        flex-direction: column;
+        text-align: center;
         margin: 0;
+        padding: 0;
     }
 
-    .wp-block-navigation ul li {
-        margin-bottom: 10px; /* Añadir espacio entre los enlaces en móviles */
+    .menu-items.show {
+        display: flex; /* Mostrar el menú cuando esté activo */
+    }
+
+    .menu-items li {
+        margin: 15px 0; /* Añadir espacio entre los enlaces en móviles */
     }
 }
 
