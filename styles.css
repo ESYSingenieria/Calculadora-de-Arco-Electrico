@@ -130,7 +130,16 @@ header.wp-block-group {
 /* Mantener el submenú de "Soluciones" siempre cerrado */
 .submenu {
     display: none !important; /* Forzar el cierre del submenú */
-    padding-left: 15px;
+    padding-left: 0; /* Eliminar cualquier padding izquierdo */
+    margin-left: 0; /* Asegurarse de que no haya margen a la izquierda */
+}
+
+/* Ajustar los enlaces dentro del submenú para alinearlos a la izquierda */
+.submenu a {
+    padding-left: 10px; /* Espaciado mínimo entre el borde izquierdo y el texto */
+    text-align: left; /* Alinear el texto a la izquierda */
+    display: block; /* Asegurarse de que los enlaces ocupen toda la fila */
+    width: 100%; /* Ocupa todo el ancho disponible */
 }
 
 /* Medios queries para pantallas grandes */
