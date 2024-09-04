@@ -35,9 +35,8 @@
     <ul class="menu-items">
         <li><a href="https://esys.cl/?page_id=247">Nuestros Servicios</a></li>
         <li><a href="https://esys.cl/sobrenosotros/">Nosotros</a></li>
-        <li><a href="https://esys.cl/experiencias-destacadas/">Experiencias Destacadas</a></li>
         <li class="wp-block-navigation-item has-child">
-            <a class="wp-block-navigation-item__content">
+            <a class="wp-block-navigation-item__content" href="javascript:void(0)">
                 Soluciones
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false">
                     <path d="M1.5 4L6 8L10.5 4" stroke-width="1.5"></path>
@@ -52,6 +51,7 @@
                 </li>
             </ul>
         </li>
+        <li><a href="https://esys.cl/experiencias-destacadas/">Experiencias Destacadas</a></li>
         <li><a href="https://esys.cl/contactanos/">Contáctanos</a></li>
     </ul>
 </nav>
@@ -171,12 +171,19 @@
 
     </div>
 
-    <script>
+<script>
+    // Alternar el menú colapsable
     document.querySelector('.menu-toggle').addEventListener('click', function() {
         var menu = document.querySelector('.menu-items');
-        menu.classList.toggle('show'); /* Mostrar u ocultar el menú */
+        menu.classList.toggle('show'); // Mostrar u ocultar el menú
     });
-    </script>
+
+    // Alternar el submenú de "Soluciones"
+    document.querySelector('.has-child > a').addEventListener('click', function() {
+        var submenu = this.nextElementSibling;
+        submenu.classList.toggle('show'); // Mostrar u ocultar el submenú
+    });
+</script>
     
 </body>
 </html>
