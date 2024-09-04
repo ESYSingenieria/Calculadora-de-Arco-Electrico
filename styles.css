@@ -115,9 +115,14 @@ header.wp-block-group {
 
 /* Mantener el menú principal siempre cerrado */
 .menu-items {
-    display: none !important; /* Forzar el cierre del menú */
+    display: none; /* Forzar el cierre del menú */
     flex-direction: column;
     text-align: center;
+}
+
+/* Mostrar el menú cuando tiene la clase "show" */
+.menu-items.show {
+    display: flex; /* Cambia a flex para mostrar el menú */
 }
 
 /* Mantener el submenú de "Soluciones" siempre cerrado */
