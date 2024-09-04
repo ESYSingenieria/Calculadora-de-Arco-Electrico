@@ -150,7 +150,7 @@ header.wp-block-group {
 
     /* Mostrar el submenú cuando tiene la clase "show" */
     .submenu.show {
-        display: block; /* Mostrar el submenú cuando tenga la clase "show" */
+        display: block !important; /* Mostrar el submenú cuando tenga la clase "show" */
     }
 }
 
