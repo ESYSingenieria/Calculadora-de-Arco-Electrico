@@ -3,16 +3,20 @@ function validateInputs() {
     var nominalVoltage = parseFloat(document.getElementById("nominalVoltage").value);
     var electrodeDistance = parseFloat(document.getElementById("electrodeDistance").value);
     var arcDuration = parseFloat(document.getElementById("arcDuration").value);
+    var arcDurationmín = parseFloat(document.getElementById("arcDurationmín").value);
     var workingDistance = parseFloat(document.getElementById("workingDistance").value);
     var width = parseFloat(document.getElementById("width").value);
     var height = parseFloat(document.getElementById("height").value);
     var depth = parseFloat(document.getElementById("depth").value);
+    var limepp1_calcm2 = parseFloat(document.getElementById("limepp1_calcm2").value);
+    var limepp2_calcm2 = parseFloat(document.getElementById("limepp2_calcm2").value);
 
     let errors = [];
 
     // Validar si los valores son números y están dentro de los rangos aceptables
     if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) ||
-        isNaN(arcDuration) || isNaN(workingDistance) || isNaN(width) || isNaN(height) || isNaN(depth)) {
+        isNaN(arcDuration) ||
+        isNaN(arcDurationmín) || isNaN(workingDistance) || isNaN(width) || isNaN(height) || isNaN(depth) || isNaN(limepp1_calcm2) || isNaN(limepp2_calcm2)) {
         errors.push("Por favor, ingresa valores válidos.");
     }
 
@@ -41,10 +45,13 @@ function validateInputs() {
     if (arcDuration < 0) {
         errors.push("- La duración del arco debe ser mayor a 0 ms.");
     }
+    if (arcDurationmín < 0) {
+        errors.push("- La duración del arco con corriente de arco mínima debe ser mayor a 0 ms.");
+    }
     if (workingDistance < 305 || workingDistance > 2540) {
         errors.push("- La distancia de trabajo debe estar entre 305 y 2540 mm.");
     }
-    if (width < 1 || width > 1244.6) {
+    if (width < 25.4 || width > 1244.6) {
         errors.push("- El ancho del gabinete debe estar entre 1 y 1244.6 mm.");
     }
     if (width < (4 * electrodeDistance)) {
@@ -54,7 +61,13 @@ function validateInputs() {
         errors.push("- El alto del gabinete debe estar entre 1 y 1244.6 mm.");
     }
     if (depth < 1) {
-        errors.push("- La profundidad debe ser mayor o igual a 1 mm.");
+        errors.push("- La profundidad del gabinete debe ser mayor o igual a 1 mm.");
+    }
+    if (limepp1_calcm2 < 1) {
+        errors.push("- El límite de energía incidente para el EPP de categoría 1 debe ser mayor o igual a 1 cal/cm2.");
+    }
+    if (limepp2_calcm2 < 1) {
+        errors.push("- El límite de energía incidente para el EPP de categoría 2 debe ser mayor o igual a 1 cal/cm2.");
     }
 
     // Si hay errores, mostrar todos los mensajes juntos con el título
@@ -87,9 +100,11 @@ function calculateBoth() {
     // Mostrar el contenedor de resultados y el gráfico
     const resultContainer = document.getElementById('result-container');
     const chartContainer = document.querySelector('.chart-container');
+    const chartContainer2 = document.querySelector('.chart-container2');
     
     resultContainer.style.display = 'block';
     chartContainer.style.display = 'block';
+    chartContainer2.style.display = 'block';
 
     // Realiza los cálculos
     calculateArcCurrent();
@@ -165,6 +180,14 @@ const tabla2 = {
     }
 };
 
+// Tabla 3: Constantes para ecuaciones basadas en c1, c2, ..., c13
+const tabla3 = {
+    "VCB": [0, -14.269, 831.37, -19382, 223660, -1264500, 3022600],
+    "VCBB": [11.38, -602.87, 12758, -137780, 802170, -2406600, 3352400],
+    "HCB": [0, -30.97, 1640.5, -33609, 333080, -1618200, 3462700],
+    "VOA": [9.5606, -515.43, 11161, -124200, 751250, -2358400, 3369600],
+    "HOA": [0, -31.555, 1682, -34607, 341240, -1599000, 3462900]
+};
 
 
 
@@ -199,6 +222,20 @@ function calculateArcCurrent() {
     const tabla1_2700V = tabla1[equipmentType]["2700 V"];
     const tabla1_14300V = tabla1[equipmentType]["14300 V"];
 
+
+
+    const tabla3_ET = tabla3[equipmentType];
+
+    const f1 = tabla3_ET[0];
+    const f2 = tabla3_ET[1];
+    const f3 = tabla3_ET[2];
+    const f4 = tabla3_ET[3];
+    const f5 = tabla3_ET[4];
+    const f6 = tabla3_ET[5];
+    const f7 = tabla3_ET[6];
+
+
+
     // Calcular I_arc para cada tensión
     const I_arc_600V = calcularIArc(tabla1_600V, faultCurrent, electrodeDistance);
     const I_arc_2700V = calcularIArc(tabla1_2700V, faultCurrent, electrodeDistance);
@@ -226,6 +263,39 @@ function calculateArcCurrent() {
         I_arc_final = I_arc_480V;
     }
 
+
+
+    let I_arc_600V_mín;
+    let I_arc_2700V_mín;
+    let I_arc_14300V_mín;
+    let I_arc_1_mín;
+    let I_arc_2_mín;
+    let I_arc_3_mín;
+    let I_arc_final_mín;
+
+    if (nominalVoltage > 0.6 && nominalVoltage <= 15) {
+        I_arc_600V_mín = ((I_arc_600V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_2700V_mín = ((I_arc_2700V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_14300V_mín = ((I_arc_14300V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+
+        I_arc_1_mín = (((I_arc_2700V_mín - I_arc_600V_mín) / 2.1) * (nominalVoltage - 2.7) + I_arc_2700V_mín);
+        I_arc_2_mín = (((I_arc_14300V_mín - I_arc_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + I_arc_14300V_mín);
+        I_arc_3_mín = (((I_arc_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((I_arc_2_mín * (nominalVoltage - 0.6)) / 2.1));
+
+        if (nominalVoltage > 2.7) {
+            I_arc_final_mín = I_arc_2_mín;
+        } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+            I_arc_final_mín = I_arc_3_mín;
+        }
+        
+    } else if (nominalVoltage >= 0.208 && nominalVoltage <= 0.6) {
+        I_arc_final_mín = ((I_arc_final * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+    }
+
+    const I_arc_variation = I_arc_final_mín / I_arc_final;
+
+
+
     // Mostrar los resultados
         // <p>I_arc_600V: ${I_arc_600V.toFixed(2)} kA</p>
         // <p>I_arc_2700V: ${I_arc_2700V.toFixed(2)} kA</p>
@@ -236,6 +306,7 @@ function calculateArcCurrent() {
         // <p>I_arc_480V: ${I_arc_480V.toFixed(2)} kA</p>
     document.getElementById("result").innerHTML += `
         <p>Corriente de Arco: ${I_arc_final.toFixed(2)} [kA]</p>
+        <p>Corriente de Arco Mínima: ${I_arc_final_mín.toFixed(2)} [kA]</p>
     `;
 
 // Mostrar el contenedor de resultados después de los cálculos
@@ -286,12 +357,13 @@ function calculateIncidentEnergy() {
     var electrodeDistance = parseFloat(document.getElementById("electrodeDistance").value);
     var nominalVoltage = parseFloat(document.getElementById("nominalVoltage").value);
     var arcDuration = parseFloat(document.getElementById("arcDuration").value); // P3
+    var arcDurationmín = parseFloat(document.getElementById("arcDurationmín").value);
     var workingDistance = parseFloat(document.getElementById("workingDistance").value); // Q3
     var width = parseFloat(document.getElementById("width").value);
     var height = parseFloat(document.getElementById("height").value);
     var depth = parseFloat(document.getElementById("depth").value);
 
-    if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) || isNaN(arcDuration) || isNaN(workingDistance) || isNaN(width) || isNaN(height) || isNaN(depth)) {
+    if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) || isNaN(arcDuration) || isNaN(arcDurationmín) || isNaN(workingDistance) || isNaN(width) || isNaN(height) || isNaN(depth)) {
         document.getElementById("result").innerText = "Por favor, ingresa valores válidos.";
         return;
     }
@@ -318,7 +390,7 @@ let correctionFactor = 0;
 let EES = 0;
 let enclosureSize = 0;
 
-if (nominalVoltage < 0.6 && width < 508 && height < 508 && depth <= 203.2) {
+if (nominalVoltage < 0.600 && width < 508 && height < 508 && depth <= 203.2) {
     enclosureType = "Shallow";
 } else {
     enclosureType = "Typical";
@@ -364,7 +436,7 @@ if (equipmentType === "VCB") {
 
 if (enclosureType === "Typical" && equipmentType === "VCB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -374,7 +446,7 @@ if (enclosureType === "Typical" && equipmentType === "VCB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 660.4 && height <= 1244.6) {
     height1 = 0.03937 * height;
@@ -384,7 +456,7 @@ if (enclosureType === "Typical" && equipmentType === "VCB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "VCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "VCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "VCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -394,7 +466,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 660.4 && height <= 1244.6) {
     height1 = 0.03937 * height;
@@ -404,7 +476,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCB" && height < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCBB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -414,7 +486,7 @@ if (enclosureType === "Typical" && equipmentType === "VCBB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCBB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -424,7 +496,7 @@ if (enclosureType === "Typical" && equipmentType === "VCBB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCBB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -434,7 +506,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCBB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCBB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -444,7 +516,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCBB" && height < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "HCB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -454,7 +526,7 @@ if (enclosureType === "Typical" && equipmentType === "HCB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "HCB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -464,7 +536,7 @@ if (enclosureType === "Typical" && equipmentType === "HCB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "HCB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "HCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "HCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "HCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -474,7 +546,7 @@ if (enclosureType === "Shallow" && equipmentType === "HCB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "HCB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -512,6 +584,20 @@ enclosureSize = 1 / correctionFactor;
     const tabla1_2700V = tabla1[equipmentType]["2700 V"];
     const tabla1_14300V = tabla1[equipmentType]["14300 V"];
 
+
+
+    const tabla3_ET = tabla3[equipmentType];
+
+    const f1 = tabla3_ET[0];
+    const f2 = tabla3_ET[1];
+    const f3 = tabla3_ET[2];
+    const f4 = tabla3_ET[3];
+    const f5 = tabla3_ET[4];
+    const f6 = tabla3_ET[5];
+    const f7 = tabla3_ET[6];
+
+
+
     // Calcular I_arc para cada tensión utilizando la función calcularIArc
     const I_arc_600V = calcularIArc(tabla1_600V, faultCurrent, electrodeDistance);
     const I_arc_2700V = calcularIArc(tabla1_2700V, faultCurrent, electrodeDistance);
@@ -539,12 +625,45 @@ enclosureSize = 1 / correctionFactor;
         I_arc_final = I_arc_480V;
     }
 
+
+
+    let I_arc_600V_mín;
+    let I_arc_2700V_mín;
+    let I_arc_14300V_mín;
+    let I_arc_1_mín;
+    let I_arc_2_mín;
+    let I_arc_3_mín;
+    let I_arc_final_mín;
+
+    if (nominalVoltage > 0.6 && nominalVoltage <= 15) {
+        I_arc_600V_mín = ((I_arc_600V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_2700V_mín = ((I_arc_2700V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_14300V_mín = ((I_arc_14300V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+
+        I_arc_1_mín = (((I_arc_2700V_mín - I_arc_600V_mín) / 2.1) * (nominalVoltage - 2.7) + I_arc_2700V_mín);
+        I_arc_2_mín = (((I_arc_14300V_mín - I_arc_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + I_arc_14300V_mín);
+        I_arc_3_mín = (((I_arc_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((I_arc_2_mín * (nominalVoltage - 0.6)) / 2.1));
+
+        if (nominalVoltage > 2.7) {
+            I_arc_final_mín = I_arc_2_mín;
+        } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+            I_arc_final_mín = I_arc_3_mín;
+        }
+        
+    } else if (nominalVoltage >= 0.208 && nominalVoltage <= 0.6) {
+        I_arc_final_mín = ((I_arc_final * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+    }
+
+    const I_arc_variation = I_arc_final_mín / I_arc_final;
+
+
+
     // Obtener las constantes para las tres tensiones del equipo seleccionado
     const tabla2_600V = tabla2[equipmentType]["600 V"];
     const tabla2_2700V = tabla2[equipmentType]["2700 V"];
     const tabla2_14300V = tabla2[equipmentType]["14300 V"];
 
-    // Calcular E_mín para cada tensión
+    // Calcular E para cada tensión
     const E_600V = calcularE(tabla2_600V, I_arc_600V, arcDuration, workingDistance, correctionFactor, faultCurrent, electrodeDistance);
     const E_2700V = calcularE(tabla2_2700V, I_arc_2700V, arcDuration, workingDistance, correctionFactor, faultCurrent, electrodeDistance);
     const E_14300V = calcularE(tabla2_14300V, I_arc_14300V,arcDuration, workingDistance, correctionFactor, faultCurrent, electrodeDistance);
@@ -558,7 +677,7 @@ enclosureSize = 1 / correctionFactor;
     // Calcular I_arc_3 usando la nueva fórmula proporcionada
     const E_3 = ((E_1 * (2.7 - nominalVoltage)) / 2.1) + ((E_2 * (nominalVoltage - 0.6)) / 2.1);
 
-    // Calcular E_mín_480V usando la nueva fórmula proporcionada
+    // Calcular E_480V usando la nueva fórmula proporcionada
     const E_480V = calcularE480V(tabla2_600V, I_arc_600V, arcDuration, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_final);
 
     // Calcular la enería incidente final basada en las condiciones de la tensión nominal (O3)
@@ -573,6 +692,50 @@ enclosureSize = 1 / correctionFactor;
     
     E_calcm2 = E_final / 4.184 ;
 
+
+
+
+
+    // Calcular E_mín para cada tensión
+    const E_600V_mín = (calcularE480V(tabla2_600V, I_arc_600V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_600V_mín));
+    const E_2700V_mín = (calcularE480V(tabla2_2700V, I_arc_2700V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_2700V_mín));
+    const E_14300V_mín = (calcularE480V(tabla2_14300V, I_arc_14300V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_14300V_mín));
+
+    // Calcular I_arc_1 usando la fórmula proporcionada
+    const E_1_mín = (((E_2700V_mín - E_600V_mín) / 2.1) * (nominalVoltage - 2.7) + E_2700V_mín);
+
+    // Calcular I_arc_2 usando la nueva fórmula proporcionada
+    const E_2_mín = (((E_14300V_mín - E_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + E_14300V_mín);
+
+    // Calcular I_arc_3 usando la nueva fórmula proporcionada
+    const E_3_mín = (((E_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((E_2_mín * (nominalVoltage - 0.6)) / 2.1));
+
+    // Calcular E_480V usando la nueva fórmula proporcionada
+    const E_480V_mín = (calcularE480V(tabla2_600V, I_arc_600V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_final_mín));
+
+    // Calcular la enería incidente final basada en las condiciones de la tensión nominal (O3)
+    let E_final_mín;
+    if (nominalVoltage > 2.7) {
+        E_final_mín = E_2_mín;
+    } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+        E_final_mín = E_3_mín;
+    } else if (nominalVoltage <= 0.6 && nominalVoltage >= 0.208) {
+        E_final_mín = E_480V_mín;
+    }
+    
+    E_calcm2_mín = E_final_mín / 4.184 ;
+
+    let E_calcm2_final;
+    if (E_calcm2 > E_calcm2_mín) {
+        E_calcm2_final = E_calcm2;
+    } else if (E_calcm2_mín > E_calcm2) {
+        E_calcm2_final = E_calcm2_mín;
+    }
+
+
+
+
+
     // Mostrar los resultados
         // <p>E_mín_600V: ${E_mín_600V.toFixed(2)} kA</p>
         // <p>E_mín_2700V: ${E_mín_2700V.toFixed(2)} kA</p>
@@ -583,10 +746,89 @@ enclosureSize = 1 / correctionFactor;
         // <p>E_mín_480V: ${E_mín_480V.toFixed(2)} kA</p>
     document.getElementById("result").innerHTML += `
         <p>Energía Incidente: ${E_calcm2.toFixed(2)} [cal/cm²]</p>
+        <p>Energía Incidente con Corriente de Arco Mínima: ${E_calcm2_mín.toFixed(2)} [cal/cm²]</p>
     `;
 
 // Mostrar el contenedor de resultados después de los cálculos
 document.getElementById("result-container").style.display = 'block';
+
+    // Declarar arrays para almacenar valores de E y distancia de trabajo
+    let energyValues = [];
+    let distanceValues = [];
+
+    // Recorrer diferentes valores de workingDistance
+    for (let distance = 305; distance <= 2540; distance += 1) {
+        // Actualizar la distancia de trabajo
+        let workingDistanceGraph = distance;
+
+    if (E_calcm2 > E_calcm2_mín) {
+        // Calcular la energía incidente (E) con la distancia de trabajo actual
+        const Energy_600V = calcularE(tabla2_600V, I_arc_600V, arcDuration, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance);
+        const Energy_2700V = calcularE(tabla2_2700V, I_arc_2700V, arcDuration, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance);
+        const Energy_14300V = calcularE(tabla2_14300V, I_arc_14300V, arcDuration, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance);
+
+        // Calcular I_arc_1 usando la fórmula proporcionada
+        const Energy_1 = ((Energy_2700V - Energy_600V) / 2.1) * (nominalVoltage - 2.7) + Energy_2700V;
+
+        // Calcular I_arc_2 usando la nueva fórmula proporcionada
+        const Energy_2 = ((Energy_14300V - Energy_2700V) / 11.6) * (nominalVoltage - 14.3) + Energy_14300V;
+
+        // Calcular I_arc_3 usando la nueva fórmula proporcionada
+        const Energy_3 = ((Energy_1 * (2.7 - nominalVoltage)) / 2.1) + ((Energy_2 * (nominalVoltage - 0.6)) / 2.1);
+
+        // Calcular E_480V usando la nueva fórmula proporcionada
+        const Energy_480V = calcularE480V(tabla2_600V, I_arc_600V, arcDuration, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance, I_arc_final);
+
+        // Calcular la enería incidente final basada en las condiciones de la tensión nominal (O3)
+        let Energy_final;
+        if (nominalVoltage > 2.7) {
+            Energy_final = Energy_2;
+        } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+            Energy_final = Energy_3;
+        } else {
+            Energy_final = Energy_480V;
+        }
+    
+        Energy_calcm2_máx = Energy_final / 4.184 ;
+
+    } else if (E_calcm2_mín > E_calcm2) {
+
+        // Calcular E_mín para cada tensión
+        const Energy_600V_mín = (calcularE480V(tabla2_600V, I_arc_600V, arcDurationmín, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance, I_arc_600V_mín));
+        const Energy_2700V_mín = (calcularE480V(tabla2_2700V, I_arc_2700V, arcDurationmín, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance, I_arc_2700V_mín));
+        const Energy_14300V_mín = (calcularE480V(tabla2_14300V, I_arc_14300V, arcDurationmín, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance, I_arc_14300V_mín));
+
+        // Calcular I_arc_1 usando la fórmula proporcionada
+        const Energy_1_mín = (((Energy_2700V_mín - Energy_600V_mín) / 2.1) * (nominalVoltage - 2.7) + Energy_2700V_mín);
+
+        // Calcular I_arc_2 usando la nueva fórmula proporcionada
+        const Energy_2_mín = (((Energy_14300V_mín - Energy_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + Energy_14300V_mín);
+
+        // Calcular I_arc_3 usando la nueva fórmula proporcionada
+        const Energy_3_mín = (((Energy_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((Energy_2_mín * (nominalVoltage - 0.6)) / 2.1));
+
+        // Calcular E_480V usando la nueva fórmula proporcionada
+        const Energy_480V_mín = (calcularE480V(tabla2_600V, I_arc_600V, arcDurationmín, workingDistanceGraph, correctionFactor, faultCurrent, electrodeDistance, I_arc_final_mín));
+
+        // Calcular la enería incidente final basada en las condiciones de la tensión nominal (O3)
+        let Energy_final_mín;
+        if (nominalVoltage > 2.7) {
+            Energy_final_mín = Energy_2_mín;
+        } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+            Energy_final_mín = Energy_3_mín;
+        } else if (nominalVoltage <= 0.6 && nominalVoltage >= 0.208) {
+            Energy_final_mín = Energy_480V_mín;
+        }
+    
+        Energy_calcm2_máx = Energy_final_mín / 4.184 ;
+    }
+        // Almacenar los resultados en los arrays
+        energyValues.push(Energy_calcm2_máx);
+        distanceValues.push(workingDistanceGraph);
+    }
+
+    // Llamar a la función para graficar
+    graficarEcalcm2_D(distanceValues, energyValues);
 
 }
 
@@ -631,15 +873,167 @@ function calcularE480V(tabla2, I_arc, arcDuration, workingDistance, correctionFa
     const x13 = tabla2[12];
 
     // Función para calcular la energía incidente (E_VOC)
-    const E_480V = ((12.552 / 50) * arcDuration) * Math.pow(10, (x1 + x2 * Math.log10(electrodeDistance) + (x3 * I_arc) / ((x4 * Math.pow(faultCurrent, 7)) +
+    const E_480V = ((12.552 / 50) * arcDuration) * Math.pow(10, (x1 + x2 * Math.log10(electrodeDistance) + ((x3 * I_arc) / ((x4 * Math.pow(faultCurrent, 7)) +
                 (x5 * Math.pow(faultCurrent, 6)) + (x6 * Math.pow(faultCurrent, 5)) + (x7 * Math.pow(faultCurrent, 4)) + (x8 * Math.pow(faultCurrent, 3)) +
-                (x9 * Math.pow(faultCurrent, 2)) + (x10 * faultCurrent)) + x11 * Math.log10(faultCurrent) + x12 * Math.log10(workingDistance) + x13 * Math.log10(I_arcFinal) + Math.log10(1 / correctionFactor)));
+                (x9 * Math.pow(faultCurrent, 2)) + (x10 * faultCurrent))) + x11 * Math.log10(faultCurrent) + x12 * Math.log10(workingDistance) + x13 * Math.log10(I_arcFinal) + Math.log10(1 / correctionFactor)));
 
     return E_480V
 }
 
+let lineChart = null;
 
+function graficarEcalcm2_D(distances, energies, imageSrc, watermarkImageSrc) {
+    var limepp1_calcm2 = parseFloat(document.getElementById("limepp1_calcm2").value);
+    var limepp2_calcm2 = parseFloat(document.getElementById("limepp2_calcm2").value);
 
+    if (lineChart !== null) {
+        lineChart.destroy();
+        lineChart = null;
+    }
+
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    const watermarkImage = new Image();
+    watermarkImage.src = 'waterMark.png';
+
+    const segments = [
+        {
+            label: 'Categoría 1',
+            color: 'rgba(255, 255, 0, 1)',
+            data: []
+        },
+        {
+            label: 'Categoría 2',
+            color: 'rgba(255, 165, 0, 1)',
+            data: []
+        },
+        {
+            label: 'Categoría 3',
+            color: 'rgba(255, 0, 0, 1)',
+            data: []
+        }
+    ];
+
+    // Separar los datos en segmentos según el valor de Y
+    distances.forEach((x, index) => {
+        const y = energies[index];
+        if (y <= limepp1_calcm2) {
+            segments[0].data.push({ x, y });
+        } else if (y > limepp1_calcm2 && y <= limepp2_calcm2) {
+            segments[1].data.push({ x, y });
+        } else {
+            segments[2].data.push({ x, y });
+        }
+    });
+
+    // Crear los datasets para cada segmento
+    const datasets = segments.map(segment => ({
+        label: segment.label,
+        data: segment.data,
+        borderColor: segment.color,
+        pointBackgroundColor: segment.color,
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        pointRadius: 0,
+        showLine: true
+    }));
+
+    watermarkImage.onload = function() {
+        lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Distancia de Trabajo [mm]'
+                        },
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 6
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Energía Incidente [cal/cm²]'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                const xLabel = context.raw.x.toFixed(2) || '';
+                                const yValue = context.raw.y.toFixed(2);
+                                return `(${yValue})`;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 10,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false
+                },
+                animation: {
+                    onComplete: function() {
+                        if (imageSrc) {
+                            const image = new Image();
+                            image.src = imageSrc;
+                            image.onload = function() {
+                                const xPosition = lineChart.scales.x.getPixelForValue(workingDistance / 1000);
+                                const yPosition = lineChart.scales.y.getPixelForValue(0);
+                                const a = 210;
+                                ctx.drawImage(image, xPosition, yPosition - ((1.85 / maxRadius) * a), ((1.85 / maxRadius) * (a / 3)), ((1.85 / maxRadius) * a));
+                            };
+                        }
+
+                        const watermarkX = (lineChart.width / 2) - (watermarkImage.width / 16);
+                        const watermarkY = (lineChart.height / 2) - (watermarkImage.height / 16);
+                        const watermarkWidth = watermarkImage.width / 8;
+                        const watermarkHeight = watermarkImage.height / 8;
+
+                        ctx.globalAlpha = 0.1;
+                        ctx.drawImage(watermarkImage, watermarkX, watermarkY, watermarkWidth, watermarkHeight);
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            },
+            plugins: [{
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, chart.width, chart.height);
+                    ctx.restore();
+                }
+            }]
+        });
+    };
+
+    watermarkImage.onerror = function() {
+        console.error("La imagen de la marca de agua no se pudo cargar.");
+    };
+}
 
 
 
@@ -663,11 +1057,12 @@ function calculateArcFlashBoundary() {
     var electrodeDistance = parseFloat(document.getElementById("electrodeDistance").value);
     var nominalVoltage = parseFloat(document.getElementById("nominalVoltage").value);
     var arcDuration = parseFloat(document.getElementById("arcDuration").value); // P3
+    var arcDurationmín = parseFloat(document.getElementById("arcDurationmín").value);
     var width = parseFloat(document.getElementById("width").value);
     var height = parseFloat(document.getElementById("height").value);
     var depth = parseFloat(document.getElementById("depth").value);
 
-    if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) || isNaN(arcDuration) || isNaN(width) || isNaN(height) || isNaN(depth)) {
+    if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) || isNaN(arcDuration) || isNaN(arcDurationmín) || isNaN(width) || isNaN(height) || isNaN(depth)) {
         document.getElementById("result").innerText = "Por favor, ingresa valores válidos.";
         return;
     }
@@ -730,7 +1125,7 @@ if (equipmentType === "VCB") {
 
 if (enclosureType === "Typical" && equipmentType === "VCB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -740,7 +1135,7 @@ if (enclosureType === "Typical" && equipmentType === "VCB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 660.4 && height <= 1244.6) {
     height1 = 0.03937 * height;
@@ -750,7 +1145,7 @@ if (enclosureType === "Typical" && equipmentType === "VCB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "VCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "VCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "VCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -760,7 +1155,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 660.4 && height <= 1244.6) {
     height1 = 0.03937 * height;
@@ -770,7 +1165,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCB" && height < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCBB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -780,7 +1175,7 @@ if (enclosureType === "Typical" && equipmentType === "VCBB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCBB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -790,7 +1185,7 @@ if (enclosureType === "Typical" && equipmentType === "VCBB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCBB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -800,7 +1195,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCBB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCBB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -810,7 +1205,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCBB" && height < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "HCB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -820,7 +1215,7 @@ if (enclosureType === "Typical" && equipmentType === "HCB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "HCB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -830,7 +1225,7 @@ if (enclosureType === "Typical" && equipmentType === "HCB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "HCB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "HCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "HCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "HCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -840,7 +1235,7 @@ if (enclosureType === "Shallow" && equipmentType === "HCB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "HCB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -877,6 +1272,20 @@ enclosureSize = 1 / correctionFactor;
     const tabla1_2700V = tabla1[equipmentType]["2700 V"];
     const tabla1_14300V = tabla1[equipmentType]["14300 V"];
 
+
+
+    const tabla3_ET = tabla3[equipmentType];
+
+    const f1 = tabla3_ET[0];
+    const f2 = tabla3_ET[1];
+    const f3 = tabla3_ET[2];
+    const f4 = tabla3_ET[3];
+    const f5 = tabla3_ET[4];
+    const f6 = tabla3_ET[5];
+    const f7 = tabla3_ET[6];
+
+
+
     // Calcular I_arc para cada tensión utilizando la función calcularIArc
     const I_arc_600V = calcularIArc(tabla1_600V, faultCurrent, electrodeDistance);
     const I_arc_2700V = calcularIArc(tabla1_2700V, faultCurrent, electrodeDistance);
@@ -903,6 +1312,39 @@ enclosureSize = 1 / correctionFactor;
     } else {
         I_arc_final = I_arc_480V;
     }
+
+
+
+    let I_arc_600V_mín;
+    let I_arc_2700V_mín;
+    let I_arc_14300V_mín;
+    let I_arc_1_mín;
+    let I_arc_2_mín;
+    let I_arc_3_mín;
+    let I_arc_final_mín;
+
+    if (nominalVoltage > 0.6 && nominalVoltage <= 15) {
+        I_arc_600V_mín = ((I_arc_600V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_2700V_mín = ((I_arc_2700V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_14300V_mín = ((I_arc_14300V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+
+        I_arc_1_mín = ((I_arc_2700V_mín - I_arc_600V_mín) / 2.1) * (nominalVoltage - 2.7) + I_arc_2700V_mín;
+        I_arc_2_mín = ((I_arc_14300V_mín - I_arc_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + I_arc_14300V_mín;
+        I_arc_3_mín = ((I_arc_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((I_arc_2_mín * (nominalVoltage - 0.6)) / 2.1);
+
+        if (nominalVoltage > 2.7) {
+            I_arc_final_mín = I_arc_2_mín;
+        } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+            I_arc_final_mín = I_arc_3_mín;
+        }
+        
+    } else if (nominalVoltage >= 0.208 && nominalVoltage <= 0.6) {
+        I_arc_final_mín = ((I_arc_final * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+    }
+
+    const I_arc_variation = I_arc_final_mín / I_arc_final;
+
+
 
     // Obtener las constantes para las tres tensiones del equipo seleccionado
     const tabla2_600V = tabla2[equipmentType]["600 V"];
@@ -935,7 +1377,49 @@ enclosureSize = 1 / correctionFactor;
     } else {
         AFB_final = AFB_480V;
     }
-    
+
+
+
+
+
+    // Calcular E_mín para cada tensión
+    const AFB_600V_mín = calcularAFB480V(tabla2_600V, I_arc_600V, arcDurationmín, correctionFactor, faultCurrent, electrodeDistance, I_arc_600V_mín);
+    const AFB_2700V_mín = calcularAFB480V(tabla2_2700V, I_arc_2700V, arcDurationmín, correctionFactor, faultCurrent, electrodeDistance, I_arc_2700V_mín);
+    const AFB_14300V_mín = calcularAFB480V(tabla2_14300V, I_arc_14300V,arcDurationmín, correctionFactor, faultCurrent, electrodeDistance, I_arc_14300V_mín);
+
+    // Calcular I_arc_1 usando la fórmula proporcionada
+    const AFB_1_mín = ((AFB_2700V_mín - AFB_600V_mín) / 2.1) * (nominalVoltage - 2.7) + AFB_2700V_mín;
+
+    // Calcular I_arc_2 usando la nueva fórmula proporcionada
+    const AFB_2_mín = ((AFB_14300V_mín - AFB_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + AFB_14300V_mín;
+
+    // Calcular I_arc_3 usando la nueva fórmula proporcionada
+    const AFB_3_mín = ((AFB_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((AFB_2_mín * (nominalVoltage - 0.6)) / 2.1);
+
+    // Calcular E_mín_480V usando la nueva fórmula proporcionada
+    const AFB_480V_mín = calcularAFB480V(tabla2_600V, I_arc_600V, arcDurationmín, correctionFactor, faultCurrent, electrodeDistance, I_arc_final_mín);
+
+    // Calcular la enería incidente final basada en las condiciones de la tensión nominal (O3)
+    let AFB_final_mín;
+    if (nominalVoltage > 2.7) {
+        AFB_final_mín = AFB_2_mín;
+    } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+        AFB_final_mín = AFB_3_mín;
+    } else {
+        AFB_final_mín = AFB_480V_mín;
+    }
+
+    let AFB_máx;
+    if (AFB_final > AFB_final_mín) {
+        AFB_máx = AFB_final;
+    } else if (AFB_final_mín > AFB_final) {
+        AFB_máx = AFB_final_mín;
+    }
+
+
+
+
+
     // Mostrar los resultados
         // <p>E_mín_600V: ${E_mín_600V.toFixed(2)} kA</p>
         // <p>E_mín_2700V: ${E_mín_2700V.toFixed(2)} kA</p>
@@ -946,13 +1430,13 @@ enclosureSize = 1 / correctionFactor;
         // <p>E_mín_480V: ${E_mín_480V.toFixed(2)} kA</p>
     document.getElementById("result").innerHTML += `
         <p>Frontera de Arco Eléctrico: ${(AFB_final/1000).toFixed(2)} [m]</p>
-        <p>Tamaño de Gabinete: ${enclosureSize.toFixed(2)}</p>
+        <p>Frontera de Arco Eléctrico con Corriente de Arco Mínima: ${(AFB_final_mín/1000).toFixed(2)} [m]</p>
     `;
 
 // Mostrar el contenedor de resultados después de los cálculos
 document.getElementById("result-container").style.display = 'block';
 
-    graficarElipse(AFB_final / 1000);
+    graficarElipse(AFB_máx / 1000);
 
 }
 
@@ -1032,6 +1516,8 @@ function graficarElipse(arcFlashBoundary) {
     var nominalVoltage = parseFloat(document.getElementById("nominalVoltage").value);
     var electrodeDistance = parseFloat(document.getElementById("electrodeDistance").value);
     var workingDistance = parseFloat(document.getElementById("workingDistance").value); // Q3
+    var limepp1_calcm2 = parseFloat(document.getElementById("limepp1_calcm2").value);
+    var limepp2_calcm2 = parseFloat(document.getElementById("limepp2_calcm2").value);
 
 // Función para calcular la energía incidente (E_mín_VOC) basada en las constantes de la tabla 2
 function calculateIncidentEnergy() {
@@ -1039,11 +1525,14 @@ function calculateIncidentEnergy() {
     var equipmentType = document.getElementById("equipmentType").value;
     var faultCurrent = parseFloat(document.getElementById("faultCurrent").value);
     var arcDuration = parseFloat(document.getElementById("arcDuration").value); // P3
+    var arcDurationmín = parseFloat(document.getElementById("arcDurationmín").value);
     var width = parseFloat(document.getElementById("width").value);
     var height = parseFloat(document.getElementById("height").value);
     var depth = parseFloat(document.getElementById("depth").value);
+    var limepp1_calcm2 = parseFloat(document.getElementById("limepp1_calcm2").value);
+    var limepp2_calcm2 = parseFloat(document.getElementById("limepp2_calcm2").value);
 
-    if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) || isNaN(arcDuration) || isNaN(workingDistance) || isNaN(width) || isNaN(height) || isNaN(depth)) {
+    if (isNaN(faultCurrent) || isNaN(electrodeDistance) || isNaN(nominalVoltage) || isNaN(arcDuration) || isNaN(arcDurationmín) || isNaN(workingDistance) || isNaN(width) || isNaN(height) || isNaN(depth) || isNaN(limepp1_calcm2) || isNaN(limepp2_calcm2)) {
         document.getElementById("result").innerText = "Por favor, ingresa valores válidos.";
         return;
     }
@@ -1106,7 +1595,7 @@ if (equipmentType === "VCB") {
 
 if (enclosureType === "Typical" && equipmentType === "VCB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1116,7 +1605,7 @@ if (enclosureType === "Typical" && equipmentType === "VCB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 660.4 && height <= 1244.6) {
     height1 = 0.03937 * height;
@@ -1126,7 +1615,7 @@ if (enclosureType === "Typical" && equipmentType === "VCB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "VCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "VCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "VCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1136,7 +1625,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCB" && height > 660.4 && height <= 1244.6) {
     height1 = 0.03937 * height;
@@ -1146,7 +1635,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCB" && height < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCBB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1156,7 +1645,7 @@ if (enclosureType === "Typical" && equipmentType === "VCBB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "VCBB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1166,7 +1655,7 @@ if (enclosureType === "Typical" && equipmentType === "VCBB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCBB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "VCBB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1176,7 +1665,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCBB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "VCBB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "VCBB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "VCBB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1186,7 +1675,7 @@ if (enclosureType === "Shallow" && equipmentType === "VCBB" && height < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "HCB" && width < 508) {
     width1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1196,7 +1685,7 @@ if (enclosureType === "Typical" && equipmentType === "HCB" && width < 508) {
 
 if (enclosureType === "Typical" && equipmentType === "HCB" && height < 508) {
     height1 = 20;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1206,7 +1695,7 @@ if (enclosureType === "Typical" && equipmentType === "HCB" && height < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "HCB" && width < 508) {
     width1 = 0.03937 * width;
-} else if (enclosureType === "Shallow" && equipmentType === "HCB" && width > 508 && width <= 660.4) {
+} else if (enclosureType === "Shallow" && equipmentType === "HCB" && width >= 508 && width <= 660.4) {
     width1 = 0.03937 * width;
 } else if (enclosureType === "Shallow" && equipmentType === "HCB" && width > 660.4 && width <= 1244.6) {
     width1 = (660.4 + ((width - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1216,7 +1705,7 @@ if (enclosureType === "Shallow" && equipmentType === "HCB" && width < 508) {
 
 if (enclosureType === "Shallow" && equipmentType === "HCB" && height < 508) {
     height1 = 0.03937 * height;
-} else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 508 && height <= 660.4) {
+} else if (enclosureType === "Typical" && equipmentType === "HCB" && height >= 508 && height <= 660.4) {
     height1 = 0.03937 * height;
 } else if (enclosureType === "Typical" && equipmentType === "HCB" && height > 660.4 && height <= 1244.6) {
     height1 = (660.4 + ((height - 660.4) * ((nominalVoltage + A) / B))) * (1/25.4);
@@ -1242,6 +1731,20 @@ enclosureSize = 1 / correctionFactor;
     const tabla1_600V = tabla1[equipmentType]["600 V"];
     const tabla1_2700V = tabla1[equipmentType]["2700 V"];
     const tabla1_14300V = tabla1[equipmentType]["14300 V"];
+
+
+
+    const tabla3_ET = tabla3[equipmentType];
+
+    const f1 = tabla3_ET[0];
+    const f2 = tabla3_ET[1];
+    const f3 = tabla3_ET[2];
+    const f4 = tabla3_ET[3];
+    const f5 = tabla3_ET[4];
+    const f6 = tabla3_ET[5];
+    const f7 = tabla3_ET[6];
+
+
 
     // Calcular I_arc para cada tensión utilizando la función calcularIArc
     const I_arc_600V = calcularIArc(tabla1_600V, faultCurrent, electrodeDistance);
@@ -1269,6 +1772,39 @@ enclosureSize = 1 / correctionFactor;
     } else {
         I_arc_final = I_arc_480V;
     }
+
+
+
+    let I_arc_600V_mín;
+    let I_arc_2700V_mín;
+    let I_arc_14300V_mín;
+    let I_arc_1_mín;
+    let I_arc_2_mín;
+    let I_arc_3_mín;
+    let I_arc_final_mín;
+
+    if (nominalVoltage > 0.6 && nominalVoltage <= 15) {
+        I_arc_600V_mín = ((I_arc_600V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_2700V_mín = ((I_arc_2700V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+        I_arc_14300V_mín = ((I_arc_14300V * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+
+        I_arc_1_mín = ((I_arc_2700V_mín - I_arc_600V_mín) / 2.1) * (nominalVoltage - 2.7) + I_arc_2700V_mín;
+        I_arc_2_mín = ((I_arc_14300V_mín - I_arc_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + I_arc_14300V_mín;
+        I_arc_3_mín = ((I_arc_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((I_arc_2_mín * (nominalVoltage - 0.6)) / 2.1);
+
+        if (nominalVoltage > 2.7) {
+            I_arc_final_mín = I_arc_2_mín;
+        } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+            I_arc_final_mín = I_arc_3_mín;
+        }
+        
+    } else if (nominalVoltage >= 0.208 && nominalVoltage <= 0.6) {
+        I_arc_final_mín = ((I_arc_final * (10000000 - (0.5 * ((f1 * (nominalVoltage**6)) + (f2 * (nominalVoltage**5)) + (f3 * (nominalVoltage**4)) + (f4 * (nominalVoltage**3)) + (f5 * (nominalVoltage**2)) + (f6 * nominalVoltage) + f7))))/10000000);
+    }
+
+    const I_arc_variation = I_arc_final_mín / I_arc_final;
+
+
 
     // Obtener las constantes para las tres tensiones del equipo seleccionado
     const tabla2_600V = tabla2[equipmentType]["600 V"];
@@ -1304,11 +1840,49 @@ enclosureSize = 1 / correctionFactor;
     
     E_calcm2 = E_final / 4.184 ;
 
-        return E_calcm2; // Asegúrate de que E_calcm2 esté correctamente calculado
+
+
+    // Calcular E_mín para cada tensión
+    const E_600V_mín = (calcularE480V(tabla2_600V, I_arc_600V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_600V_mín));
+    const E_2700V_mín = (calcularE480V(tabla2_2700V, I_arc_2700V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_2700V_mín));
+    const E_14300V_mín = (calcularE480V(tabla2_14300V, I_arc_14300V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_14300V_mín));
+
+    // Calcular I_arc_1 usando la fórmula proporcionada
+    const E_1_mín = (((E_2700V_mín - E_600V_mín) / 2.1) * (nominalVoltage - 2.7) + E_2700V_mín);
+
+    // Calcular I_arc_2 usando la nueva fórmula proporcionada
+    const E_2_mín = (((E_14300V_mín - E_2700V_mín) / 11.6) * (nominalVoltage - 14.3) + E_14300V_mín);
+
+    // Calcular I_arc_3 usando la nueva fórmula proporcionada
+    const E_3_mín = (((E_1_mín * (2.7 - nominalVoltage)) / 2.1) + ((E_2_mín * (nominalVoltage - 0.6)) / 2.1));
+
+    // Calcular E_480V usando la nueva fórmula proporcionada
+    const E_480V_mín = (calcularE480V(tabla2_600V, I_arc_600V, arcDurationmín, workingDistance, correctionFactor, faultCurrent, electrodeDistance, I_arc_final_mín));
+
+    // Calcular la enería incidente final basada en las condiciones de la tensión nominal (O3)
+    let E_final_mín;
+    if (nominalVoltage > 2.7) {
+        E_final_mín = E_2_mín;
+    } else if (nominalVoltage > 0.6 && nominalVoltage <= 2.7) {
+        E_final_mín = E_3_mín;
+    } else if (nominalVoltage <= 0.6 && nominalVoltage >= 0.208) {
+        E_final_mín = E_480V_mín;
+    }
+    
+    E_calcm2_mín = E_final_mín / 4.184 ;
+
+    let E_calcm2_final;
+    if (E_calcm2 > E_calcm2_mín) {
+        E_calcm2_final = E_calcm2;
+    } else if (E_calcm2_mín > E_calcm2) {
+        E_calcm2_final = E_calcm2_mín;
+    }
+
+        return E_calcm2_final; // Asegúrate de que E_calcm2 esté correctamente calculado
     }
 
     // Calcular la energía incidente
-    var E_calcm2 = calculateIncidentEnergy();
+    var E_calcm2_final = calculateIncidentEnergy();
 
 
     if (isNaN(E_calcm2)) {
@@ -1380,9 +1954,9 @@ enclosureSize = 1 / correctionFactor;
 
     // Selección de la imagen según la energía incidente
     let imageSrc = '';
-    if (E_calcm2 <= 7) {
+    if (E_calcm2_final <= limepp1_calcm2) {
         imageSrc = 'epp1.png'; // Usa la imagen epp1 si la energía es menor o igual a 7
-    } else if (E_calcm2 > 7 && E_calcm2 <= 35) {
+    } else if (E_calcm2_final > limepp1_calcm2 && E_calcm2_final <= limepp2_calcm2) {
         imageSrc = 'epp2.png'; // Usa la imagen epp2 si la energía está entre 7 y 35
     }
 
@@ -1397,7 +1971,7 @@ const maxRadius = Math.max(xRadius, xRadius2, xRadius3, xRadius4, (workingDistan
 const watermarkImage = new Image();
 watermarkImage.src = 'waterMark.png'; // Reemplaza con la ruta de tu marca de agua
 
-if (E_calcm2 <= 35) {
+if (E_calcm2_final <= limepp2_calcm2) {
     const image = new Image();
     image.src = imageSrc;
 
@@ -1454,7 +2028,7 @@ if (E_calcm2 <= 35) {
                         position: 'bottom',
                         title: {
                             display: true,
-                            text: 'Distancia (m)'
+                            text: 'Distancia de Trabajo [m]'
                         },
                         min: 0,
                         max: maxRadius * 1.1
@@ -1496,6 +2070,34 @@ if (E_calcm2 <= 35) {
                                 const xPosition = chart.scales.x.getPixelForValue(workingDistance / 1000); // Posición en el eje X basada en workingDistance
                                 const yPosition = chart.scales.y.getPixelForValue(0); // Posición en el eje Y pegada al eje X
                                 ctx.drawImage(image, xPosition, yPosition - ((1.85/maxRadius)*(a)), ((1.85/maxRadius)*(a/3)), ((1.85/maxRadius)*a)); // Dibujar la imagen con el borde inferior en el eje X
+
+                                // Agregar listener para mostrar tooltip
+                                const tooltip = document.getElementById('custom-tooltip');
+                                ctx.canvas.addEventListener('mousemove', function(event) {
+                                    const rect = ctx.canvas.getBoundingClientRect();
+                                    const mouseX = event.clientX - rect.left;
+                                    const mouseY = event.clientY - rect.top;
+
+                                    // Verifica si el mouse está sobre la imagen
+                                    if (mouseX >= xPosition && mouseX <= (xPosition + ((1.85/maxRadius)*a/3)) && 
+                                        mouseY >= (yPosition - ((1.85/maxRadius)*(a))) && mouseY <= yPosition) {
+                                        
+                                        if (E_calcm2_final <= limepp2_calcm2 && E_calcm2_final > limepp1_calcm2) {
+                                            tooltip.style.display = 'block';
+                                            tooltip.style.left = event.pageX + 'px';
+                                            tooltip.style.top = event.pageY + 'px';
+                                            tooltip.innerHTML = "Camisa/polera de manga + pantalón u overol igual o superior a 35 [cal/cm2] + lentes de protección ocular claros + capucha resistente al arco igual o superior a 35 [cal/cm2], casco aislante clase A (E), zapatos aislantes mínimo de 600 [V], guantes aislantes como mínimo clase 1 y sus respectivos guantes de cuero (cabritilla) protectores. Otros EPP según evaluación de riesgos específica."; // Cambia esto por el texto que desees mostrar
+                                        } else if (E_calcm2_final <= limepp1_calcm2) {
+                                            tooltip.style.display = 'block';
+                                            tooltip.style.left = event.pageX + 'px';
+                                            tooltip.style.top = event.pageY + 'px';
+                                            tooltip.innerHTML = "Camisa/polera de manga + pantalón u overol igual o superior a 8 [cal/cm2] + lentes de protección claros + protector facial y esclavina resistente al arco igual o superior a 8 [cal/cm2], casco aislante clase A (E), zapatos aislantes mínimo de 600 [V], guantes aislantes y sus respectivos guantes de cuero protectores. Otros EPP según evaluación de riesgos específica."; // Cambia esto por el texto que desees mostrar
+                                        }
+
+                                    } else {
+                                        tooltip.style.display = 'none';
+                                    }
+                               });
                             };
                         }
 
@@ -1530,7 +2132,7 @@ if (E_calcm2 <= 35) {
         console.error("La imagen no se pudo cargar.");
     };
 
-} else if (E_calcm2 > 35) {
+} else if (E_calcm2_final > limepp2_calcm2) {
     // Dibujar el gráfico con Chart.js
     chart = new Chart(ctx, {
         type: 'scatter',
@@ -1583,7 +2185,7 @@ if (E_calcm2 <= 35) {
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: 'Distancia (m)'
+                        text: 'Distancia [m]'
                     },
                     min: 0,
                     max: maxRadius * 1.1
@@ -1613,7 +2215,23 @@ if (E_calcm2 <= 35) {
 
             interaction: {
                 mode: null, // Desactiva la interacción del mouse
-            }
+            },
+
+                animation: {
+                    onComplete: function() {
+                        // Añadir la marca de agua al gráfico
+                        const watermarkX = (chart.width / 2) - (watermarkImage.width / 16);
+                        const watermarkY = (chart.height / 2) - (watermarkImage.height / 16);
+                        const watermarkWidth = watermarkImage.width / 8;
+                        const watermarkHeight = watermarkImage.height / 8;
+                        
+                        ctx.globalAlpha = 0.1;  // Ajusta la transparencia
+                        ctx.drawImage(watermarkImage, watermarkX, watermarkY, watermarkWidth, watermarkHeight);
+                        ctx.globalAlpha = 1;  // Restaura la opacidad por defecto
+
+                    }
+                }
+
         },
 
         // Agregar fondo blanco al gráfico
