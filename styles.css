@@ -115,7 +115,7 @@ header.wp-block-group {
 
 /* Ocultar el menú y el submenú por defecto */
 .menu-items {
-    display: none; /* El menú estará cerrado por defecto */
+    display: none;
     flex-direction: column;
     text-align: center;
 }
@@ -165,6 +165,7 @@ header.wp-block-group {
         display: block;
     }
 }
+
 
 
 
