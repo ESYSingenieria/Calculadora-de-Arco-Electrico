@@ -115,7 +115,7 @@ header.wp-block-group {
 
 /* Mantener el menú principal siempre cerrado */
 .menu-items {
-    display: none; /* Forzar el cierre del menú */
+    display: none !important; /* Forzar el cierre del menú */
     flex-direction: column;
     text-align: center;
 }
