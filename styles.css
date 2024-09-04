@@ -122,7 +122,7 @@ header.wp-block-group {
 
 /* Mostrar el menú cuando tiene la clase "show" */
 .menu-items.show {
-    display: flex; /* Cambia a flex para mostrar el menú */
+    display: flex !important; /* Cambiar a "flex" cuando se agrega la clase "show" */
 }
 
 /* Mantener el submenú de "Soluciones" siempre cerrado */
