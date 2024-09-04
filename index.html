@@ -22,30 +22,39 @@
             </div>
         </div>
 
-        <nav class="wp-block-navigation">
-            <ul>
-                <li><a href="https://esys.cl/?page_id=247">Nuestros Servicios</a></li>
-                <li><a href="https://esys.cl/sobrenosotros/">Nosotros</a></li>
-                <li><a href="https://esys.cl/experiencias-destacadas/">Experiencias Destacadas</a></li>
-                <li class="wp-block-navigation-item has-child">
-                    <a class="wp-block-navigation-item__content">
-                        Soluciones
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false">
-                            <path d="M1.5 4L6 8L10.5 4" stroke-width="1.5"></path>
-                        </svg>
-                    </a>
-                    <ul class="submenu">
-                        <li class="submenu-item">
-                            <a href="https://esysingenieria.github.io/Calculadora-de-Arco-Electrico/">Calculadora de Arco Eléctrico AC</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="https://esys.cl/proxxi/">PROXXI</a>
-                        </li>
-                    </ul>
+<nav class="wp-block-navigation">
+    <!-- Botón de menú para dispositivos móviles -->
+    <button class="menu-toggle" aria-label="Abrir menú">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="4" y="7.5" width="16" height="1.5"></rect>
+            <rect x="4" y="15" width="16" height="1.5"></rect>
+        </svg>
+    </button>
+
+    <!-- Lista de elementos del menú -->
+    <ul class="menu-items">
+        <li><a href="https://esys.cl/?page_id=247">Nuestros Servicios</a></li>
+        <li><a href="https://esys.cl/sobrenosotros/">Nosotros</a></li>
+        <li><a href="https://esys.cl/experiencias-destacadas/">Experiencias Destacadas</a></li>
+        <li class="wp-block-navigation-item has-child">
+            <a class="wp-block-navigation-item__content">
+                Soluciones
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M1.5 4L6 8L10.5 4" stroke-width="1.5"></path>
+                </svg>
+            </a>
+            <ul class="submenu">
+                <li class="submenu-item">
+                    <a href="https://esysingenieria.github.io/Calculadora-de-Arco-Electrico/">Calculadora de Arco Eléctrico AC</a>
                 </li>
-                <li><a href="https://esys.cl/contactanos/">Contáctanos</a></li>
+                <li class="submenu-item">
+                    <a href="https://esys.cl/proxxi/">PROXXI</a>
+                </li>
             </ul>
-        </nav>
+        </li>
+        <li><a href="https://esys.cl/contactanos/">Contáctanos</a></li>
+    </ul>
+</nav>
     </header>
 
     <!-- Calculadora -->
@@ -162,5 +171,12 @@
 
     </div>
 
+    <script>
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+        var menu = document.querySelector('.menu-items');
+        menu.classList.toggle('show'); /* Mostrar u ocultar el menú */
+    });
+    </script>
+    
 </body>
 </html>
