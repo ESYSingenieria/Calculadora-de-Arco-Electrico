@@ -110,6 +110,9 @@ header.wp-block-group {
     display: block;
 }
 
+
+
+
 /* Ocultar el menú y el submenú por defecto */
 .menu-items {
     display: none; /* El menú estará cerrado por defecto */
@@ -162,6 +165,7 @@ header.wp-block-group {
         display: block;
     }
 }
+
 
 
 
