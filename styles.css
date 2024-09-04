@@ -112,7 +112,7 @@ header.wp-block-group {
 
 /* Ocultar el menú y el submenú por defecto */
 .menu-items {
-    display: none;
+    display: none; /* El menú estará cerrado por defecto */
     flex-direction: column;
     text-align: center;
 }
@@ -143,7 +143,7 @@ header.wp-block-group {
     display: block;
 }
 
-/* Medios queries para pantallas pequeñas */
+/* Medios queries para pantallas grandes */
 @media (min-width: 768px) {
     .menu-toggle {
         display: none; /* Ocultar el botón en pantallas grandes */
@@ -155,13 +155,14 @@ header.wp-block-group {
     }
 
     .submenu {
-        display: none; /* Ocultar submenús en pantallas grandes hasta interacción */
+        display: none;
     }
 
     .submenu.show {
         display: block;
     }
 }
+
 
 
 
