@@ -163,10 +163,20 @@
     </div>
 
 <script>
-    // Alternar el menú colapsable
+    // Asegurarse de que el menú esté cerrado al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        var menu = document.querySelector('.menu-items');
+        menu.classList.remove('show'); // Forzar el cierre del menú al cargar
+    });
+
+    // Alternar el menú colapsable al hacer clic en el botón
     document.querySelector('.menu-toggle').addEventListener('click', function() {
         var menu = document.querySelector('.menu-items');
-        menu.classList.toggle('show'); // Mostrar u ocultar el menú principal
+        if (menu.classList.contains('show')) {
+            menu.classList.remove('show'); // Cerrar el menú si está abierto
+        } else {
+            menu.classList.add('show'); // Abrir el menú si está cerrado
+        }
     });
 
     // Alternar el submenú de "Soluciones"
@@ -176,7 +186,6 @@
         submenu.classList.toggle('show'); // Mostrar u ocultar el submenú
     });
 </script>
-
 
     
 </body>
