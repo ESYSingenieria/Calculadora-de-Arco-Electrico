@@ -162,38 +162,7 @@
 
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var menu = document.querySelector('.menu-items');
-        var submenuLink = document.querySelector('.has-child > a');
-        var submenu = document.querySelector('.submenu');
-        
-        // Asegurarse de que el menú esté cerrado al cargar la página
-        menu.classList.remove('show');
 
-        // Alternar el menú principal (botón hamburguesa)
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-            menu.classList.toggle('show'); // Mostrar u ocultar el menú principal
-        });
-
-        // Alternar el submenú de "Soluciones"
-        submenuLink.addEventListener('click', function(event) {
-            event.preventDefault(); // Evitar que recargue la página
-            submenu.classList.toggle('show'); // Mostrar u ocultar el submenú
-        });
-
-        // Cerrar el submenú si se hace clic fuera
-        document.addEventListener('click', function(event) {
-            var isClickInsideMenu = submenuLink.contains(event.target);
-            var isClickInsideSubmenu = submenu.contains(event.target);
-
-            // Si el clic no fue en el enlace de "Soluciones" o en el submenú, cerrarlo
-            if (!isClickInsideMenu && !isClickInsideSubmenu) {
-                submenu.classList.remove('show');
-            }
-        });
-    });
-</script>
 
 
 
