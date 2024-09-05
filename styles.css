@@ -9,14 +9,14 @@ header.wp-block-group {
     z-index: 1000;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
-    justify-content: space-between; /* Para mover el contenido hacia los extremos */
+    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Permite que los elementos se acomoden en varias líneas si es necesario */
+    flex-wrap: wrap;
 }
 
 /* Desplazar los enlaces a la esquina superior derecha */
 .wp-block-navigation {
-    margin-right: 50px; /* Añadir espacio desde el borde derecho */
+    margin-right: 50px;
 }
 
 .wp-block-navigation ul {
@@ -24,28 +24,28 @@ header.wp-block-group {
     padding: 0;
     margin: 0;
     display: flex;
-    justify-content: flex-end; /* Mover los enlaces a la derecha */
+    justify-content: flex-end;
 }
 
 .wp-block-navigation ul li {
     display: inline-block;
-    margin-left: 40px; /* Espacio entre los enlaces */
+    margin-left: 40px;
 }
 
 /* Cambiar el color del texto del banner a negro */
 .wp-block-navigation ul li a {
     text-decoration: none;
-    color: #000; /* Cambia el color de los enlaces a negro */
+    color: #000;
     font-weight: bold;
     font-size: 20px;
 }
 
 .wp-block-navigation ul li a:hover {
-    color: #333; /* Un tono diferente al pasar el cursor */
+    color: #333;
 }
 
 .wp-block-site-logo {
-    margin-left: 20px; /* Espacio desde el borde izquierdo */
+    margin-left: 20px;
 }
 
 .wp-block-site-logo img {
@@ -63,33 +63,24 @@ header.wp-block-group {
     top: 100%;
     left: 0;
     background-color: #f5f5f5;
-    padding: 0; /* Quitar padding para ajustar el texto al borde izquierdo */
+    padding: 0;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     list-style: none;
     margin: 0;
     width: 200px;
 }
 
-.wp-block-navigation .submenu-item {
-    padding: 0; /* Eliminar padding en los items del submenú */
-    margin: 0; /* Eliminar márgenes adicionales */
-}
-
+/* Ajustar los enlaces dentro del submenú */
 .wp-block-navigation .submenu-item a {
     text-decoration: none;
     color: #000;
-    font-size: 16px !important;
-    padding: 5px 10px; /* Reducir padding para acercar el texto al borde */
+    font-size: 16px;
+    padding: 5px 10px;
     display: block;
-    line-height: 2.0; /* Aumentar el espacio entre las líneas de texto */
-    padding-left: 0px; /* Agregar 5 píxeles de separación desde el borde izquierdo */
+    text-align: left;
 }
 
-.wp-block-navigation .submenu-item a:hover {
-    color: #333;
-}
-
-/* Mostrar el submenú al pasar el ratón */
+/* Mostrar el submenú al hacer hover */
 .wp-block-navigation .has-child:hover .submenu {
     display: block;
 }
@@ -107,61 +98,50 @@ header.wp-block-group {
     background-repeat: no-repeat;
 }
 
-/* Mostrar el submenú al pasar el ratón */
-.wp-block-navigation .has-child:hover .submenu {
-    display: block;
-}
-
-
-
-
-/* Mantener el menú principal siempre cerrado */
-.menu-items {
-    display: none !important; /* Forzar el cierre del menú */
-    flex-direction: column;
-    text-align: center;
-}
-
-/* Mostrar el menú cuando tiene la clase "show" */
-.menu-items.show {
-    display: flex !important; /* Cambiar a "flex" cuando se agrega la clase "show" */
-}
-
-/* Mantener el submenú de "Soluciones" siempre cerrado */
-.submenu {
-    display: none !important; /* Forzar el cierre del submenú */
-    padding-left: 0 !important; /* Eliminar cualquier padding izquierdo */
-    margin-left: 0 !important; /* Asegurarse de que no haya margen a la izquierda */
-}
-
-/* Ajustar los enlaces dentro del submenú para alinearlos a la izquierda */
-.submenu a {
-    padding-left: 0px !important; /* Espaciado mínimo entre el borde izquierdo y el texto */
-    text-align: left; /* Alinear el texto a la izquierda */
-    display: block; /* Asegurarse de que los enlaces ocupen toda la fila */
-    width: 100%; /* Ocupa todo el ancho disponible */
-    margin: 0 !important;
-}
-
-/* Medios queries para pantallas grandes */
+/* Estilos para pantallas grandes */
 @media (min-width: 768px) {
     .menu-toggle {
-        display: none; /* Ocultar el botón en pantallas grandes */
+        display: none;
     }
 
     .menu-items {
-        display: flex !important; /* En pantallas grandes, mostrar el menú completo */
+        display: flex !important;
         flex-direction: row;
     }
 
     .submenu {
-        display: none; /* No usar "!important" aquí, el submenú debe abrirse al hacer clic */
+        display: none;
     }
 
-    /* Mostrar el submenú cuando tiene la clase "show" */
     .submenu.show {
-        display: block !important; /* Mostrar el submenú cuando tenga la clase "show" */
+        display: block !important;
     }
+}
+
+/* Estilos para pantallas móviles */
+.menu-items {
+    display: none;
+    flex-direction: column;
+    text-align: center;
+}
+
+.menu-items.show {
+    display: flex !important;
+}
+
+.submenu {
+    display: none;
+}
+
+.submenu.show {
+    display: block;
+}
+
+.submenu a {
+    padding-left: 0 !important;
+    text-align: left !important;
+    display: block;
+    width: 100%;
 }
 
 
