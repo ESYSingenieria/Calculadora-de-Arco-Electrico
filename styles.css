@@ -78,11 +78,11 @@ header.wp-block-group {
 .wp-block-navigation .submenu-item a {
     text-decoration: none;
     color: #000;
-    font-size: 16px;
+    font-size: 16px !important;
     padding: 5px 10px; /* Reducir padding para acercar el texto al borde */
     display: block;
     line-height: 2.0; /* Aumentar el espacio entre las líneas de texto */
-    padding-left: 18px; /* Agregar 5 píxeles de separación desde el borde izquierdo */
+    padding-left: 5px; /* Agregar 5 píxeles de separación desde el borde izquierdo */
 }
 
 .wp-block-navigation .submenu-item a:hover {
