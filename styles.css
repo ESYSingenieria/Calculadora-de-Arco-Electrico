@@ -52,7 +52,7 @@ header.wp-block-group {
     width: 150px;
 }
 
-/* Estilos para el submenú */
+/* Estilos del submenú */
 .wp-block-navigation .has-child {
     position: relative;
 }
@@ -63,24 +63,31 @@ header.wp-block-group {
     top: 100%;
     left: 0;
     background-color: #f5f5f5;
-    padding: 0;
+    padding: 0 !important;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     list-style: none;
     margin: 0;
     width: 200px;
 }
 
-/* Ajustar los enlaces dentro del submenú */
+/* Alinear el texto del submenú a la izquierda */
 .wp-block-navigation .submenu-item a {
     text-decoration: none;
     color: #000;
-    font-size: 16px;
+    font-size: 16px !important;
     padding: 5px 10px;
     display: block;
     text-align: left;
+    padding-left: 0px !important; /* Alinear el texto al borde izquierdo */
+    width: 100%;
 }
 
-/* Mostrar el submenú al hacer hover */
+/* Ajuste para los enlaces del submenú */
+.wp-block-navigation .submenu-item a:hover {
+    color: #333;
+}
+
+/* Mostrar el submenú al pasar el ratón */
 .wp-block-navigation .has-child:hover .submenu {
     display: block;
 }
@@ -98,10 +105,15 @@ header.wp-block-group {
     background-repeat: no-repeat;
 }
 
-/* Estilos para pantallas grandes */
+/* Mostrar el submenú al pasar el ratón */
+.wp-block-navigation .has-child:hover .submenu {
+    display: block;
+}
+
+/* Ajustar el submenú para pantallas grandes */
 @media (min-width: 768px) {
     .menu-toggle {
-        display: none;
+        display: none; /* Ocultar el botón en pantallas grandes */
     }
 
     .menu-items {
@@ -113,6 +125,7 @@ header.wp-block-group {
         display: none;
     }
 
+    /* Mostrar el submenú cuando tiene la clase "show" */
     .submenu.show {
         display: block !important;
     }
@@ -138,11 +151,13 @@ header.wp-block-group {
 }
 
 .submenu a {
-    padding-left: 0 !important;
+    padding-left: 0px !important; /* Alinear el texto al borde izquierdo en móviles */
     text-align: left !important;
     display: block;
     width: 100%;
+    margin: 0 !important;
 }
+
 
 
 
