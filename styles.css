@@ -82,7 +82,7 @@ header.wp-block-group {
     padding: 5px 10px; /* Reducir padding para acercar el texto al borde */
     display: block;
     line-height: 2.0; /* Aumentar el espacio entre las líneas de texto */
-    padding-left: 5px; /* Agregar 5 píxeles de separación desde el borde izquierdo */
+    padding-left: 0px; /* Agregar 5 píxeles de separación desde el borde izquierdo */
 }
 
 .wp-block-navigation .submenu-item a:hover {
@@ -136,7 +136,7 @@ header.wp-block-group {
 
 /* Ajustar los enlaces dentro del submenú para alinearlos a la izquierda */
 .submenu a {
-    padding-left: 10px !important; /* Espaciado mínimo entre el borde izquierdo y el texto */
+    padding-left: 0px !important; /* Espaciado mínimo entre el borde izquierdo y el texto */
     text-align: left; /* Alinear el texto a la izquierda */
     display: block; /* Asegurarse de que los enlaces ocupen toda la fila */
     width: 100%; /* Ocupa todo el ancho disponible */
