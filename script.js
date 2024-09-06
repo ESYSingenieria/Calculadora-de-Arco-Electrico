@@ -2,16 +2,19 @@ document.addEventListener("DOMContentLoaded", function() {
     var menuToggle = document.querySelector('.menu-toggle');
     var menuItems = document.querySelector('.menu-items');
 
-    // Solo aplicar el comportamiento en pantallas móviles
-    if (window.innerWidth <= 768) {
-        // Asegúrate de que el menú comience cerrado en móviles
-        menuItems.classList.remove('show');
+    // Asegurar que el menú esté cerrado por defecto
+    menuItems.classList.remove('active');
 
-        menuToggle.addEventListener('click', function() {
-            menuItems.classList.toggle('show');
-        });
-    }
+    // Alternar la clase 'active' para abrir/cerrar el menú
+    menuToggle.addEventListener('click', function() {
+        if (menuItems.classList.contains('active')) {
+            menuItems.classList.remove('active'); // Cerrar el menú
+        } else {
+            menuItems.classList.add('active'); // Abrir el menú
+        }
+    });
 });
+
 
 
 
