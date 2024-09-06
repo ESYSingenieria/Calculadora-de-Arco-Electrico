@@ -1,4 +1,4 @@
-/* Menú oculto por defecto en móviles */
+/* Estilos para el botón hamburguesa en pantallas móviles */
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -9,26 +9,51 @@
         cursor: pointer;
     }
 
+    /* Menú oculto por defecto */
     .menu-items {
-        display: none; /* Ocultar el menú por defecto */
+        display: none;
         flex-direction: column;
         width: 100%;
+        background-color: #f5f5f5;
     }
 
-    .menu-items.active { /* Nueva clase para mostrar el menú */
-        display: flex;
+    /* Menú visible cuando se presiona el botón */
+    .menu-items.open {
+        display: flex; /* Mostrar el menú al hacer clic en la hamburguesa */
+    }
+
+    /* Estilos para los enlaces del menú */
+    .menu-items li {
+        list-style: none;
+        margin: 10px 0;
+    }
+
+    .menu-items li a {
+        color: #000;
+        text-decoration: none;
+        padding: 10px;
+        display: block;
+    }
+
+    .menu-items li a:hover {
+        color: #333;
     }
 }
 
-/* Menú visible por defecto en pantallas grandes */
+/* Estilos para pantallas grandes */
 @media (min-width: 769px) {
     .menu-toggle {
-        display: none;
+        display: none; /* Ocultar el botón hamburguesa en pantallas grandes */
     }
 
     .menu-items {
         display: flex;
         flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .menu-items li {
+        margin-left: 20px;
     }
 }
 
