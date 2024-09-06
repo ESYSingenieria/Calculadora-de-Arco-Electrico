@@ -1,29 +1,34 @@
-/* Menú colapsable para móviles */
+/* Menú oculto por defecto en móviles */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: block; /* Mostrar el botón de menú solo en móviles */
+        display: block;
+        background-color: #333;
+        color: white;
+        padding: 10px;
+        font-size: 18px;
+        cursor: pointer;
     }
 
     .menu-items {
-        display: none; /* Ocultar el menú inicialmente solo en móviles */
+        display: none; /* Ocultar el menú por defecto */
+        flex-direction: column;
+        width: 100%;
     }
 
-    .menu-items.show {
-        display: flex; /* Mostrar el menú cuando se presione el botón */
-        flex-direction: column;
-        text-align: center;
+    .menu-items.active { /* Nueva clase para mostrar el menú */
+        display: flex;
     }
 }
 
-/* Asegurarse de que el menú siempre esté visible en pantallas grandes */
+/* Menú visible por defecto en pantallas grandes */
 @media (min-width: 769px) {
-    .menu-items {
-        display: flex !important; /* Mostrar el menú por defecto en pantallas grandes */
-        flex-direction: row;
+    .menu-toggle {
+        display: none;
     }
 
-    .menu-toggle {
-        display: none; /* Ocultar el botón en pantallas grandes */
+    .menu-items {
+        display: flex;
+        flex-direction: row;
     }
 }
 
