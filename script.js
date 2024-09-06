@@ -1,3 +1,22 @@
+document.addEventListener("DOMContentLoaded", function() {
+    var menuToggle = document.querySelector('.menu-toggle');
+    var menuItems = document.querySelector('.menu-items');
+
+    // Solo aplicar el comportamiento en pantallas móviles
+    if (window.innerWidth <= 768) {
+        // Asegúrate de que el menú comience cerrado en móviles
+        menuItems.classList.remove('show');
+
+        menuToggle.addEventListener('click', function() {
+            menuItems.classList.toggle('show');
+        });
+    }
+});
+
+
+
+
+
 function validateInputs() {
     var faultCurrent = parseFloat(document.getElementById("faultCurrent").value);
     var nominalVoltage = parseFloat(document.getElementById("nominalVoltage").value);
