@@ -2,16 +2,9 @@ document.addEventListener("DOMContentLoaded", function() {
     var menuToggle = document.querySelector('.menu-toggle');
     var menuItems = document.querySelector('.menu-items');
 
-    // Asegurar que el menú esté cerrado por defecto
-    menuItems.classList.remove('active');
-
-    // Alternar la clase 'active' para abrir/cerrar el menú
+    // Alternar la visibilidad del menú al hacer clic en el botón
     menuToggle.addEventListener('click', function() {
-        if (menuItems.classList.contains('active')) {
-            menuItems.classList.remove('active'); // Cerrar el menú
-        } else {
-            menuItems.classList.add('active'); // Abrir el menú
-        }
+        menuItems.classList.toggle('open'); // Alternar la clase 'open' para mostrar/ocultar el menú
     });
 });
 
