@@ -1,7 +1,7 @@
 /* Menú colapsable para móviles */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: block; /* Mostrar el botón de menú solo en móviles */
+        display: block !important; /* Mostrar el botón de menú solo en móviles */
     }
 
     .menu-items {
