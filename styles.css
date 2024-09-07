@@ -153,29 +153,6 @@ header.wp-block-group {
     margin-right: 10px;
 }
 
-/* Mostrar el botón de menú en pantallas pequeñas */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block; /* Mostrar el botón en pantallas pequeñas */
-    }
-
-    .menu-items {
-        display: none; /* Ocultar el menú por defecto en móviles */
-        flex-direction: column;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-    }
-
-    .menu-items.show {
-        display: flex; /* Mostrar el menú cuando esté activo */
-    }
-
-    .menu-items li {
-        margin: 15px 0; /* Añadir espacio entre los enlaces en móviles */
-    }
-}
-
 
 
 
