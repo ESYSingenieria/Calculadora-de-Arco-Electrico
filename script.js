@@ -1,12 +1,13 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
+    var menu = document.querySelector('.menu-items');
     var menuToggle = document.querySelector('.menu-toggle');
-    var menuItems = document.querySelector('.menu-items');
 
-    // Alternar la visibilidad del menú al hacer clic en el botón
-    menuToggle.addEventListener('click', function() {
-        menuItems.classList.toggle('open'); // Alternar la clase 'open' para mostrar/ocultar el menú
+    menuToggle.addEventListener('click', function(event) {
+        event.stopPropagation();
+        menu.classList.toggle('show'); // Alternar la clase 'show' para abrir/cerrar el menú
     });
 });
+
 
 
 
