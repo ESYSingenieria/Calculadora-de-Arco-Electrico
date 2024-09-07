@@ -1,107 +1,3 @@
-/* Estilos para el botón hamburguesa en pantallas móviles */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block; /* Mostrar el botón de hamburguesa en móviles */
-        background-color: #333;
-        color: white;
-        padding: 10px;
-        font-size: 18px;
-        cursor: pointer;
-    }
-
-    .menu-items {
-        display: none; /* Ocultar el menú por defecto en móviles */
-        flex-direction: column;
-        width: 100%;
-        background-color: #f5f5f5;
-    }
-
-    .menu-items.show {
-        display: flex; /* Mostrar el menú cuando tenga la clase 'show' */
-    }
-
-    .menu-items li {
-        list-style: none;
-        margin: 10px 0;
-    }
-
-    .menu-items li a {
-        color: #000;
-        text-decoration: none;
-        padding: 10px;
-        display: block;
-    }
-
-    .menu-items li a:hover {
-        color: #333; /* Cambiar el color al pasar el ratón */
-    }
-}
-
-/* Estilos para pantallas grandes */
-@media (min-width: 769px) {
-    .menu-toggle {
-        display: none; /* Ocultar el botón de hamburguesa en pantallas grandes */
-    }
-
-    .menu-items {
-        display: flex; /* Mantener el menú visible en pantallas grandes */
-        flex-direction: row;
-    }
-
-    .menu-items li {
-        margin-left: 20px; /* Espacio entre los elementos del menú */
-    }
-}
-
-/* Estilos para el submenú (manteniendo el diseño actual) */
-.wp-block-navigation .has-child {
-    position: relative;
-}
-
-.wp-block-navigation .submenu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #f5f5f5;
-    padding: 0;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    list-style: none;
-    margin: 0;
-    width: 200px;
-}
-
-.wp-block-navigation .submenu-item {
-    padding: 0;
-    margin: 0;
-}
-
-.wp-block-navigation .submenu-item a {
-    text-decoration: none;
-    color: #000;
-    font-size: 16px;
-    padding: 5px 10px;
-    display: block;
-    line-height: 2.0;
-    padding-left: 18px;
-}
-
-.wp-block-navigation .submenu-item a:hover {
-    color: #333;
-}
-
-/* Mostrar el submenú cuando se hace hover */
-.wp-block-navigation .has-child:hover .submenu {
-    display: block;
-}
-
-
-
-
-
-
-
-
 /* Estilos del banner de navegación */
 header.wp-block-group {
     background-color: #f5f5f5;
@@ -214,38 +110,44 @@ header.wp-block-group {
     display: block;
 }
 
-/* Estilos del menú colapsable para móviles */
-.menu-toggle {
-    display: none; /* Ocultar el botón en pantallas grandes */
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    margin-right: 10px;
+
+
+
+/* Mantener el menú principal siempre cerrado */
+.menu-items {
+    display: none !important; /* Forzar el cierre del menú */
+    flex-direction: column;
+    text-align: center;
 }
 
-/* Mostrar el botón de menú en pantallas pequeñas */
-@media (max-width: 768px) {
+/* Mostrar el menú cuando tiene la clase "show" */
+.menu-items.show {
+    display: flex !important; /* Cambiar a "flex" cuando se agrega la clase "show" */
+}
+
+/* Mantener el submenú de "Soluciones" siempre cerrado */
+.submenu {
+    display: none !important; /* Forzar el cierre del submenú */
+    padding-left: 15px;
+}
+
+/* Medios queries para pantallas grandes */
+@media (min-width: 768px) {
     .menu-toggle {
-        display: block; /* Mostrar el botón en pantallas pequeñas */
+        display: none; /* Ocultar el botón en pantallas grandes */
     }
 
     .menu-items {
-        display: none; /* Ocultar el menú por defecto en móviles */
-        flex-direction: column;
-        text-align: center;
-        margin: 0;
-        padding: 0;
+        display: flex !important; /* En pantallas grandes, mostrar el menú completo */
+        flex-direction: row;
     }
 
-    .menu-items.show {
-        display: flex; /* Mostrar el menú cuando esté activo */
-    }
-
-    .menu-items li {
-        margin: 15px 0; /* Añadir espacio entre los enlaces en móviles */
+    .submenu {
+        display: none !important; /* Mantener el submenú cerrado incluso en pantallas grandes */
     }
 }
+
+
 
 
 
