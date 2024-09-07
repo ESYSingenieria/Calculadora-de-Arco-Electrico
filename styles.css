@@ -9,7 +9,7 @@
     }
 
     .menu-items.show {
-        display: flex !important; /* Mostrar el menú cuando se presione el botón */
+        display: flex; /* Mostrar el menú cuando se presione el botón */
         flex-direction: column;
         text-align: center;
     }
