@@ -1,36 +1,24 @@
 /* Menú colapsable para móviles */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: block !important; /* Mostrar el botón de menú solo en móviles */
+        display: block; /* Mostrar el botón de menú solo en móviles */
     }
 
     .menu-items {
-        display: none !important; /* Ocultar el menú inicialmente solo en móviles */
+        display: none; /* Ocultar el menú inicialmente solo en móviles */
     }
 
     .menu-items.show {
-        display: flex; /* Mostrar el menú cuando se presione el botón */
+        display: flex !important; /* Mostrar el menú cuando se presione el botón */
         flex-direction: column;
         text-align: center;
     }
 }
 
-/* Asegurarse de que el menú siempre esté visible en pantallas grandes */
-@media (min-width: 769px) {
-    .menu-items {
-        display: flex !important; /* Mostrar el menú por defecto en pantallas grandes */
-        flex-direction: row;
-    }
-
-    .menu-toggle {
-        display: none; /* Ocultar el botón en pantallas grandes */
-    }
-}
 
 
 
-
-
+++
 /* Estilos del banner de navegación */
 header.wp-block-group {
     background-color: #f5f5f5;
@@ -152,10 +140,6 @@ header.wp-block-group {
     padding: 10px;
     margin-right: 10px;
 }
-
-
-
-
 
 
 
