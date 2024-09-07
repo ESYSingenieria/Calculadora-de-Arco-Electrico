@@ -1,12 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('El script para el menú está funcionando correctamente');
+
     var menu = document.querySelector('.menu-items');
+    var submenuLink = document.querySelector('.has-child > a');
+    var submenu = document.querySelector('.submenu');
     var menuToggle = document.querySelector('.menu-toggle');
 
+    console.log(menu, submenuLink, submenu, menuToggle); // Verifica si los elementos están siendo seleccionados correctamente
+
     menuToggle.addEventListener('click', function(event) {
+        console.log('El botón de menú fue presionado');
         event.stopPropagation();
-        menu.classList.toggle('show'); // Alternar la clase 'show' para abrir/cerrar el menú
+        menu.classList.toggle('show');
+    });
+
+    submenuLink.addEventListener('click', function(event) {
+        console.log('El enlace de Soluciones fue presionado');
+        event.preventDefault();
+        event.stopPropagation();
+        submenu.classList.toggle('show');
     });
 });
+
 
 
 
