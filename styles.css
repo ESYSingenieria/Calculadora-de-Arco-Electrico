@@ -5,11 +5,11 @@
     }
 
     .menu-items {
-        display: none; /* Ocultar el menú inicialmente solo en móviles */
+        display: none !important; /* Ocultar el menú inicialmente solo en móviles */
     }
 
     .menu-items.show {
-        display: flex; /* Mostrar el menú cuando se presione el botón */
+        display: flex !important; /* Mostrar el menú cuando se presione el botón */
         flex-direction: column;
         text-align: center;
     }
