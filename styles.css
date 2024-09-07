@@ -1,7 +1,7 @@
 /* Estilos para el botón hamburguesa en pantallas móviles */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: block; /* Mantener el botón de hamburguesa visible en móviles */
+        display: block; /* Mostrar el botón de hamburguesa en móviles */
         background-color: #333;
         color: white;
         padding: 10px;
@@ -10,7 +10,7 @@
     }
 
     .menu-items {
-        display: none; /* Mantener el menú oculto por defecto en móviles */
+        display: none; /* Ocultar el menú por defecto en móviles */
         flex-direction: column;
         width: 100%;
         background-color: #f5f5f5;
@@ -33,14 +33,14 @@
     }
 
     .menu-items li a:hover {
-        color: #333; /* Cambiar el color cuando el ratón pasa sobre el enlace */
+        color: #333; /* Cambiar el color al pasar el ratón */
     }
 }
 
 /* Estilos para pantallas grandes */
 @media (min-width: 769px) {
     .menu-toggle {
-        display: none; /* Ocultar el botón hamburguesa en pantallas grandes */
+        display: none; /* Ocultar el botón de hamburguesa en pantallas grandes */
     }
 
     .menu-items {
@@ -52,6 +52,49 @@
         margin-left: 20px; /* Espacio entre los elementos del menú */
     }
 }
+
+/* Estilos para el submenú (manteniendo el diseño actual) */
+.wp-block-navigation .has-child {
+    position: relative;
+}
+
+.wp-block-navigation .submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f5f5f5;
+    padding: 0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    margin: 0;
+    width: 200px;
+}
+
+.wp-block-navigation .submenu-item {
+    padding: 0;
+    margin: 0;
+}
+
+.wp-block-navigation .submenu-item a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    padding: 5px 10px;
+    display: block;
+    line-height: 2.0;
+    padding-left: 18px;
+}
+
+.wp-block-navigation .submenu-item a:hover {
+    color: #333;
+}
+
+/* Mostrar el submenú cuando se hace hover */
+.wp-block-navigation .has-child:hover .submenu {
+    display: block;
+}
+
 
 
 
