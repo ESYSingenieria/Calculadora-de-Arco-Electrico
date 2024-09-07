@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 function validateInputs() {
     var faultCurrent = parseFloat(document.getElementById("faultCurrent").value);
     var nominalVoltage = parseFloat(document.getElementById("nominalVoltage").value);
