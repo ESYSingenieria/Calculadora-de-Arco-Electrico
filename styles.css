@@ -9,16 +9,28 @@
     }
 
     .menu-items.show {
-        display: flex !important; /* Mostrar el menú cuando se presione el botón */
+        display: flex; /* Mostrar el menú cuando se presione el botón */
         flex-direction: column;
         text-align: center;
+    }
+}
+
+/* Asegurarse de que el menú siempre esté visible en pantallas grandes */
+@media (min-width: 769px) {
+    .menu-items {
+        display: flex !important; /* Mostrar el menú por defecto en pantallas grandes */
+        flex-direction: row;
+    }
+
+    .menu-toggle {
+        display: none; /* Ocultar el botón en pantallas grandes */
     }
 }
 
 
 
 
-++
+
 /* Estilos del banner de navegación */
 header.wp-block-group {
     background-color: #f5f5f5;
@@ -139,6 +151,29 @@ header.wp-block-group {
     cursor: pointer;
     padding: 10px;
     margin-right: 10px;
+}
+
+/* Mostrar el botón de menú en pantallas pequeñas */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block; /* Mostrar el botón en pantallas pequeñas */
+    }
+
+    .menu-items {
+        display: none; /* Ocultar el menú por defecto en móviles */
+        flex-direction: column;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu-items.show {
+        display: flex; /* Mostrar el menú cuando esté activo */
+    }
+
+    .menu-items li {
+        margin: 15px 0; /* Añadir espacio entre los enlaces en móviles */
+    }
 }
 
 
