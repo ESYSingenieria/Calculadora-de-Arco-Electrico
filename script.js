@@ -1,16 +1,36 @@
 document.addEventListener("DOMContentLoaded", function() {
+    console.log('El script ha cargado correctamente');
+
     var menuToggle = document.querySelector('.menu-toggle');
     var menuItems = document.querySelector('.menu-items');
 
-    // Solo aplicar el comportamiento en pantallas móviles
+    // Asegurarse de que el menú esté oculto al cargar la página solo en móviles
     if (window.innerWidth <= 768) {
-        // Asegúrate de que el menú comience cerrado en móviles
         menuItems.classList.remove('show');
-
-        menuToggle.addEventListener('click', function() {
-            menuItems.classList.toggle('show');
-        });
+        menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
     }
+
+    // Manejo del clic en el botón de hamburguesa para abrir/cerrar el menú principal en móviles
+    menuToggle.addEventListener('click', function(event) {
+        console.log('Se ha hecho clic en el botón de menú');
+        menuItems.classList.toggle('show');
+        
+        if (menuItems.classList.contains('show')) {
+            menuItems.style.display = 'flex'; // Mostrar el menú
+        } else {
+            menuItems.style.display = 'none'; // Ocultar el menú
+        }
+        event.stopPropagation();
+    });
+
+    // Detectar clics fuera del menú para cerrarlo en móviles
+    document.addEventListener('click', function(event) {
+        if (window.innerWidth <= 768 && !menuToggle.contains(event.target) && !menuItems.contains(event.target)) {
+            console.log('Clic fuera del menú, se oculta el menú');
+            menuItems.classList.remove('show');
+            menuItems.style.display = 'none'; // Asegurar que se oculte solo en móviles
+        }
+    });
 });
 
 
