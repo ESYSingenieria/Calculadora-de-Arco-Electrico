@@ -1,16 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('El script para el menú está funcionando correctamente');
-
-    var menu = document.querySelector('.menu-items');
+document.addEventListener("DOMContentLoaded", function() {
     var menuToggle = document.querySelector('.menu-toggle');
+    var menuItems = document.querySelector('.menu-items');
 
-    console.log(menu, menuToggle); // Verifica si los elementos están siendo seleccionados correctamente
+    // Solo aplicar el comportamiento en pantallas móviles
+    if (window.innerWidth <= 768) {
+        // Asegúrate de que el menú comience cerrado en móviles
+        menuItems.classList.remove('show');
 
-    menuToggle.addEventListener('click', function(event) {
-        console.log('El botón de menú fue presionado');
-        event.stopPropagation();
-        menu.classList.toggle('show');
-    });
+        menuToggle.addEventListener('click', function() {
+            menuItems.classList.toggle('show');
+        });
+    }
 });
 
 
