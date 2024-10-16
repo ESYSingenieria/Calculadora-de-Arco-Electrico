@@ -56,8 +56,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Asegurarse de que el menú esté oculto al cargar la página solo en móviles
     if (window.innerWidth <= 768) {
-        menuItems.classList.remove('show');
         menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
+        menuItems.classList.remove('show');
+        event.stopPropagation();
     }
 
     // Manejo del clic en el botón de hamburguesa para abrir/cerrar el menú principal en móviles
