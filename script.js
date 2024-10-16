@@ -51,32 +51,25 @@ type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
     console.log('El script ha cargado correctamente');
 
-    var menuToggle = document.querySelector('.menu-toggle');
     var menuItems = document.querySelector('.menu-items');
 
     // Asegurarse de que el menú esté oculto al cargar la página solo en móviles
     if (window.innerWidth <= 768) {
         menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
-        menuItems.classList.remove('show');
-        event.stopPropagation();
     }
 
     // Manejo del clic en el botón de hamburguesa para abrir/cerrar el menú principal en móviles
     menuToggle.addEventListener('click', function(event) {
         console.log('Se ha hecho clic en el botón de menú');
-        menuItems.classList.toggle('show');
         
-        if (menuItems.classList.contains('show')) {
+        if (menuItems.style.display.contains('none')) {
             menuItems.style.display = 'flex'; // Mostrar el menú
         } else {
             menuItems.style.display = 'none'; // Ocultar el menú
         }
         event.stopPropagation();
     });
-
-    menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
-    menuItems.classList.remove('show');
-});
+})
 
 
 
