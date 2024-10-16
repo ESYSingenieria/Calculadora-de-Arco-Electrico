@@ -56,19 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Asegurarse de que el menú esté oculto al cargar la página solo en móviles
     if (window.innerWidth <= 768) {
         menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
-    }
-
-    // Manejo del clic en el botón de hamburguesa para abrir/cerrar el menú principal en móviles
-    menuToggle.addEventListener('click', function(event) {
-        console.log('Se ha hecho clic en el botón de menú');
-        
-        if (menuItems.style.display.contains('none')) {
-            menuItems.style.display = 'flex'; // Mostrar el menú
-        } else {
-            menuItems.style.display = 'none'; // Ocultar el menú
-        }
-        event.stopPropagation();
-    });
+    };
 })
 
 
