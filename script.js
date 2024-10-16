@@ -48,16 +48,6 @@ type="text/javascript">
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
-    console.log('El script ha cargado correctamente');
-
-    var menuItems = document.querySelector('.menu-items');
-
-    // Asegurarse de que el menú esté oculto al cargar la página solo en móviles
-    if (window.innerWidth <= 768) {
-        menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
-    };
-})
 
 
 
