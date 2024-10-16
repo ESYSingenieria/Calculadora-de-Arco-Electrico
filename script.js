@@ -74,14 +74,8 @@ document.addEventListener("DOMContentLoaded", function() {
         event.stopPropagation();
     });
 
-    // Detectar clics fuera del menú para cerrarlo en móviles
-    document.addEventListener('click', function(event) {
-        if (window.innerWidth <= 768 && !menuToggle.contains(event.target) && !menuItems.contains(event.target)) {
-            console.log('Clic fuera del menú, se oculta el menú');
-            menuItems.classList.remove('show');
-            menuItems.style.display = 'none'; // Asegurar que se oculte solo en móviles
-        }
-    });
+    menuItems.style.display = 'none'; // Ocultar el menú en móviles al cargar
+    menuItems.classList.remove('show');
 });
 
 
