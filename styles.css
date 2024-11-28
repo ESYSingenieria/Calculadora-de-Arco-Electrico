@@ -1,7 +1,7 @@
 /* Estilos para el menú en pantallas móviles */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: none; /* Mostrar el botón hamburguesa en móviles */
+        display: flex; /* Mostrar el botón hamburguesa en móviles */
         background-color: #333;
         color: white;
         padding: 10px;
